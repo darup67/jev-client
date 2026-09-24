@@ -7,6 +7,7 @@
 
   python3 jev.py --ping     one tiny call; checks the key and the endpoint
   python3 jev.py --usage    calls, failures, tokens and cost per caller per day
+  python3 jev.py --set-key  paste a TypeSafe key (hidden); stores it in the Keychain, then pings
 
 ask() never raises. A missing key, a timeout or an outage returns None, so a
 caller that uses Jev keeps working without it. Every call is logged to
@@ -112,7 +113,33 @@ def usage():
         print(f"{day:<11} {caller:<14} {n:>6} {bad:>7} {tok:>9} ${tok / 1e6 * USD_PER_MTOK:>7.4f}")
 
 
+def set_key():
+    """Prompt for the key without echo and store it in the Keychain (service typesafe-jev).
+    Run in your own terminal; the key never touches a file or shell history."""
+    import getpass
+    k = getpass.getpass("TypeSafe API key (input hidden): ").strip()
+    if not k:
+        print("nothing entered; unchanged")
+        return 1
+    # -U updates an existing item instead of failing on a duplicate
+    r = subprocess.run(["security", "add-generic-password", "-U", "-a", os.environ.get("USER", "jev"),
+                        "-s", "typesafe-jev", "-w", k], capture_output=True, text=True)
+    if r.returncode:
+        print(f"Keychain write failed: {r.stderr.strip()}")
+        return 1
+    global _key, _looked
+    _key, _looked = "", 0.0
+    print("stored in Keychain (service typesafe-jev). Testing it...")
+    ok = ask("Help! My payouts have been failing for 3 days.",
+             {"is_urgent": {"type": "noul", "instructions": "Does this message convey urgency?"}}, caller="ping")
+    print("Jev answered: the key works. Agents pick it up within 5 minutes." if ok else
+          "Stored, but the test call failed; see calls.jsonl. Check the key or TypeSafe's status.")
+    return 0 if ok else 1
+
+
 if __name__ == "__main__":
+    if "--set-key" in sys.argv:
+        sys.exit(set_key())
     if "--usage" in sys.argv:
         usage()
     elif "--ping" in sys.argv:
