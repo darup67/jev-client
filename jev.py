@@ -6,8 +6,12 @@
   res = jev.ask(state, questions, caller="coin-launch")   # dict, or None on any failure
 
   python3 jev.py --ping     one tiny call; checks the key and the endpoint
-  python3 jev.py --usage    calls, failures, tokens and cost per caller per day
+  python3 jev.py --usage    calls, failures, tokens and cost per caller per day, plus this month vs the budget
   python3 jev.py --set-key  paste a TypeSafe key (hidden); stores it in the Keychain, then pings
+
+BUDGET: budget.json {"monthly_usd": 25} caps spend across ALL agents per calendar month.
+Spend = this month's input tokens in calls.jsonl x $0.042/Mtok (output is free). Once the next
+call would cross the cap, ask() returns None (like an outage) and logs a "budget" failure.
 
 ask() never raises. A missing key, a timeout or an outage returns None, so a
 caller that uses Jev keeps working without it. Every call is logged to
@@ -29,6 +33,39 @@ USD_PER_MTOK = 0.042
 RETRY = {429, 500, 502, 503, 504, 529}
 
 _key, _looked, _warned, _lock = "", 0.0, False, threading.Lock()
+BUDGET = os.path.join(HERE, "budget.json")
+_spend = {"month": None, "offset": 0, "tokens": 0}
+_budget_warned = None
+
+
+def month_spend():
+    """(usd spent this calendar month by every caller, monthly cap). Reads only the part of
+    calls.jsonl appended since the last look, so it stays cheap as the log grows."""
+    month = time.strftime("%Y-%m")
+    with _lock:
+        if _spend["month"] != month:
+            _spend.update(month=month, offset=0, tokens=0)
+        try:
+            with open(LOG, "rb") as f:
+                f.seek(_spend["offset"])
+                chunk = f.read()
+            end = chunk.rfind(b"\n") + 1                # only whole lines
+            for line in chunk[:end].splitlines():
+                try:
+                    r = json.loads(line)
+                except ValueError:
+                    continue
+                if r.get("in") and time.strftime("%Y-%m", time.localtime(r["t"])) == month:
+                    _spend["tokens"] += r["in"]
+            _spend["offset"] += end
+        except FileNotFoundError:
+            pass
+        tokens = _spend["tokens"]
+    try:
+        cap = float(json.load(open(BUDGET))["monthly_usd"])
+    except Exception:
+        cap = 25.0                                    # budget file missing or broken: keep the default cap
+    return tokens / 1e6 * USD_PER_MTOK, cap
 
 
 def api_key():
@@ -66,6 +103,16 @@ def ask(state, questions, caller="?", model=MODEL, timeout=10, tries=3):
             _warned = True
         return None
     body = json.dumps({"state": state, "model": model, "questions": questions}).encode()
+    spent, cap = month_spend()
+    if spent + len(body) / 1e6 * USD_PER_MTOK >= cap:     # ~1 token per byte is an over-estimate: safe side
+        global _budget_warned
+        if _budget_warned != time.strftime("%Y-%m"):
+            print(f"jev: monthly budget reached (${spent:.2f} of ${cap:.2f}); skipping calls until next month "
+                  f"or until budget.json is raised", file=sys.stderr)
+            _budget_warned = time.strftime("%Y-%m")
+        _log({"t": time.time(), "caller": caller, "model": model, "ok": False, "ms": 0,
+              "err": f"budget: ${spent:.4f} of ${cap:.2f} this month", "q": sorted(questions)})
+        return None
     t0, err = time.time(), None
     for i in range(tries):
         req = urllib.request.Request(URL, data=body, method="POST", headers={
@@ -111,6 +158,8 @@ def usage():
     print(f"{'day':<11} {'caller':<14} {'calls':>6} {'failed':>7} {'in tok':>9} {'cost':>8}")
     for (day, caller), (n, bad, tok) in sorted(rows.items()):
         print(f"{day:<11} {caller:<14} {n:>6} {bad:>7} {tok:>9} ${tok / 1e6 * USD_PER_MTOK:>7.4f}")
+    spent, cap = month_spend()
+    print(f"\n{time.strftime('%Y-%m')}: ${spent:.4f} of the ${cap:.2f} monthly budget ({100 * spent / cap:.2f}%)")
 
 
 def set_key():

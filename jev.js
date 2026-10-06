@@ -8,6 +8,8 @@
  *   const res = await jev.ask(state, questions, { caller: 'zillow' });  // object or null
  *
  * Key: $TYPESAFE_API_KEY, else Keychain service "typesafe-jev".
+ * Budget: budget.json {"monthly_usd": 25}, shared with jev.py: once this calendar month's
+ * spend by ALL agents (input tokens in calls.jsonl x $0.042/Mtok) would cross it, ask() returns null.
  */
 const fs = require('fs');
 const path = require('path');
@@ -18,7 +20,34 @@ const URL = 'https://api.typesafe.ai/v1/systemone';
 const MODEL = 'jev-1.13.0';   // pinned; see jev.py
 const RETRY = new Set([429, 500, 502, 503, 504, 529]);
 
-let key = null, warned = false;
+const BUDGET = path.join(__dirname, 'budget.json');
+const USD_PER_MTOK = 0.042;
+let key = null, warned = false, budgetWarned = null;
+const spend = { month: null, offset: 0, tokens: 0 };
+
+const monthOf = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+
+/** [usd spent this month by every caller, cap]. Reads only what was appended since the last look. */
+function monthSpend() {
+  const month = monthOf(new Date());
+  if (spend.month !== month) Object.assign(spend, { month, offset: 0, tokens: 0 });
+  try {
+    const buf = fs.readFileSync(LOG);
+    const chunk = buf.subarray(spend.offset);
+    const end = chunk.lastIndexOf(10) + 1;          // whole lines only
+    for (const line of chunk.subarray(0, end).toString('utf8').split('\n')) {
+      if (!line) continue;
+      try {
+        const r = JSON.parse(line);
+        if (r.in && monthOf(new Date(r.t * 1000)) === month) spend.tokens += r.in;
+      } catch {}
+    }
+    spend.offset += end;
+  } catch {}
+  let cap = 25;
+  try { cap = Number(JSON.parse(fs.readFileSync(BUDGET, 'utf8')).monthly_usd) || 25; } catch {}
+  return [spend.tokens / 1e6 * USD_PER_MTOK, cap];
+}
 
 function apiKey() {
   if (key === null) {
@@ -46,6 +75,15 @@ async function ask(state, questions, { caller = '?', model = MODEL, timeoutMs = 
     return null;
   }
   const body = JSON.stringify({ state, model, questions });
+  const [spent, cap] = monthSpend();
+  if (spent + body.length / 1e6 * USD_PER_MTOK >= cap) {
+    if (budgetWarned !== spend.month) {
+      console.error(`jev: monthly budget reached ($${spent.toFixed(2)} of $${cap.toFixed(2)}); skipping calls`);
+      budgetWarned = spend.month;
+    }
+    logCall({ t: Date.now() / 1000, caller, model, ok: false, ms: 0, err: `budget: $${spent.toFixed(4)} of $${cap.toFixed(2)} this month`, q: Object.keys(questions).sort() });
+    return null;
+  }
   const t0 = Date.now();
   let err = null;
   for (let i = 0; i < tries; i++) {
@@ -76,4 +114,4 @@ async function ask(state, questions, { caller = '?', model = MODEL, timeoutMs = 
   return null;
 }
 
-module.exports = { ask, apiKey, MODEL };
+module.exports = { ask, apiKey, monthSpend, MODEL };
