@@ -21,7 +21,7 @@ logged here; callers keep their own record of what they asked.
 The key comes from $TYPESAFE_API_KEY, else the Keychain:
   security add-generic-password -a "$USER" -s typesafe-jev -w '<key>'
 """
-import json, os, subprocess, sys, threading, time, urllib.error, urllib.request
+import hashlib, json, os, subprocess, sys, threading, time, urllib.error, urllib.request
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 LOG = os.path.join(HERE, "calls.jsonl")
@@ -93,9 +93,36 @@ def _log(rec):
             pass
 
 
-def ask(state, questions, caller="?", model=MODEL, timeout=10, tries=3):
-    """POST one state and its questions. Returns {"model", "answers", "usage"} or None."""
+_cache = {}
+
+
+def _coarse(o):
+    """Numbers to 2 significant figures, so a state that has not moved by more than a percent or so hashes the same as before."""
+    if isinstance(o, bool):
+        return o
+    if isinstance(o, float):
+        return float(f"{o:.2g}") if o == o else o
+    if isinstance(o, int):
+        return int(float(f"{o:.2g}")) if abs(o) >= 100 else o
+    if isinstance(o, dict):
+        return {k: _coarse(v) for k, v in sorted(o.items())}
+    if isinstance(o, (list, tuple)):
+        return [_coarse(v) for v in o]
+    return o
+
+
+def ask(state, questions, caller="?", model=MODEL, timeout=10, tries=3, reuse=None):
+    """POST one state and its questions. Returns {"model", "answers", "usage"} or None.
+    reuse=(name, ttl_seconds): within ttl, the SAME question set on a state that matches to 2 significant figures returns the earlier answer
+    (marked "_cached": True, logged with zero tokens) instead of paying again. Nothing is reused across different questions or a changed state."""
     global _warned
+    ck = None
+    if reuse:
+        ck = reuse[0] + ":" + hashlib.md5(json.dumps([_coarse(state), questions], default=str, sort_keys=True).encode()).hexdigest()
+        hit = _cache.get(ck)
+        if hit and time.time() - hit[0] < reuse[1]:
+            _log({"t": time.time(), "caller": caller, "model": hit[1].get("model"), "ok": True, "ms": 0, "in": 0, "out": 0, "cached": True, "q": sorted(questions)})
+            return {**hit[1], "_cached": True}
     key = api_key()
     if not key:
         if not _warned:
@@ -124,6 +151,10 @@ def ask(state, questions, caller="?", model=MODEL, timeout=10, tries=3):
             _log({"t": time.time(), "caller": caller, "model": res.get("model"), "ok": True,
                   "ms": round((time.time() - t0) * 1000), "in": u.get("input_tokens"),
                   "out": u.get("output_tokens"), "q": sorted(questions)})
+            if ck:
+                if len(_cache) > 3000:
+                    _cache.clear()
+                _cache[ck] = (time.time(), res)
             return res
         except urllib.error.HTTPError as e:
             detail = e.read()[:300].decode("utf-8", "replace")
