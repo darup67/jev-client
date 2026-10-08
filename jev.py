@@ -179,16 +179,17 @@ def usage():
             for line in f:
                 r = json.loads(line)
                 k = (time.strftime("%Y-%m-%d", time.localtime(r["t"])), r["caller"])
-                a = rows.setdefault(k, [0, 0, 0])
+                a = rows.setdefault(k, [0, 0, 0, 0])
                 a[0] += 1
+                a[3] += 1 if r.get("cached") else 0
                 a[1] += 0 if r["ok"] else 1
                 a[2] += r.get("in") or 0
     except FileNotFoundError:
         print("no calls yet")
         return
-    print(f"{'day':<11} {'caller':<14} {'calls':>6} {'failed':>7} {'in tok':>9} {'cost':>8}")
-    for (day, caller), (n, bad, tok) in sorted(rows.items()):
-        print(f"{day:<11} {caller:<14} {n:>6} {bad:>7} {tok:>9} ${tok / 1e6 * USD_PER_MTOK:>7.4f}")
+    print(f"{'day':<11} {'caller':<14} {'calls':>6} {'reused':>7} {'failed':>7} {'in tok':>9} {'cost':>8}")
+    for (day, caller), (n, bad, tok, hit) in sorted(rows.items()):
+        print(f"{day:<11} {caller:<14} {n:>6} {hit:>7} {bad:>7} {tok:>9} ${tok / 1e6 * USD_PER_MTOK:>7.4f}")
     spent, cap = month_spend()
     print(f"\n{time.strftime('%Y-%m')}: ${spent:.4f} of the ${cap:.2f} monthly budget ({100 * spent / cap:.2f}%)")
 
