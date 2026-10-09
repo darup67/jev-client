@@ -28,6 +28,55 @@ def _parse(sym, name):
     return dt.date(2000 + int(t[0:2]), int(t[2:4]), int(t[4:6])), t[6], int(t[7:]) / 1000.0
 
 
+def monthly_expiry(today=None, now=None):
+    """The next standard monthly expiration (third Friday) that has not expired yet (4 PM ET)."""
+    now = now or dt.datetime.now(ET)
+    today = today or now.date()
+    for add in (0, 1, 2):
+        y, mo = today.year + (today.month - 1 + add) // 12, (today.month - 1 + add) % 12 + 1
+        d = dt.date(y, mo, 15)
+        d += dt.timedelta(days=(4 - d.weekday()) % 7)             # third Friday = first Friday on/after the 15th
+        if dt.datetime.combine(d, dt.time(16, 0), ET) > now:
+            return d
+    return None
+
+
+def hedge_levels(opts, S, now=None, step=0.25, span=5.0):
+    """Monthly hedge pressure and dynamic hedge-pressure walls from a list of option dicts (keys: exp, dte, cp, K, T, iv, oi, gamma).
+    MONTHLY: only the next standard monthly expiry: its net GEX (dealer gamma $ per 1%), call wall, put wall and the 'key strike' = the strike with the largest absolute net gamma
+      (positive = a magnet/pin, negative = a repel zone).
+    DYNAMIC: the total GEX profile is recomputed on a grid of hypothetical prices (own Black-Scholes gamma, Cboe IV, time to expiry) instead of using today's static strike open interest, so the
+      walls move with price, IV and time: up_wall = the price above spot where dealer gamma peaks (strongest dampening / ceiling), dn_wall = the same below spot (floor), flip = zero crossing.
+    ASSUMPTION: dealers are long customer-sold calls and short customer-bought puts (calls +, puts -)."""
+    now = now or dt.datetime.now(ET)
+    mult = lambda s: 100 * s * s * 0.01
+    liquid = [o for o in opts if o["oi"] > 0 and 0.03 < o["iv"] < 4.0 and o["T"] > 0]
+    n = int(round(span / step))
+    grid = [S * (1 + (i * step) / 100.0) for i in range(-n, n + 1)]
+    prof = [sum(_gamma(s, o["K"], o["T"], o["iv"]) * o["oi"] * mult(s) * (1 if o["cp"] == "C" else -1) for o in liquid) for s in grid]
+    inner = list(zip(prof, grid))[1:-1]                            # a peak on the grid's edge is just a profile still rising: not a wall
+    up = [(p, s) for p, s in inner if s > S * 1.0005 and p > 0]
+    dn = [(p, s) for p, s in inner if s < S * 0.9995 and p > 0]
+    out = {"dyn_up": max(up)[1] if up else None, "dyn_dn": max(dn)[1] if dn else None, "dyn_up_gex": max(up)[0] if up else None, "dyn_dn_gex": max(dn)[0] if dn else None,
+           "profile": [[round(s, 4), round(p / 1e6, 1)] for s, p in zip(grid[::4], prof[::4])]}
+    me = monthly_expiry(now.date(), now)
+    mo = [o for o in opts if o["exp"] == me]
+    if me and mo and sum(o["oi"] for o in mo) > 0:
+        by = {}
+        for o in mo:
+            g = o["gamma"] if o["gamma"] > 0 else (_gamma(S, o["K"], o["T"], o["iv"]) if 0.03 < o["iv"] < 4.0 else 0.0)
+            gx = g * o["oi"] * mult(S)
+            d = by.setdefault(o["K"], {"c": 0.0, "p": 0.0})
+            d["c" if o["cp"] == "C" else "p"] += gx
+        net = sum(v["c"] - v["p"] for v in by.values())
+        ca = {k: v["c"] for k, v in by.items() if k >= S and v["c"] > 0}
+        pb = {k: v["p"] for k, v in by.items() if k <= S and v["p"] > 0}
+        key = max(by, key=lambda k: abs(by[k]["c"] - by[k]["p"]))
+        out["monthly"] = {"exp": me.isoformat(), "dte": (me - now.date()).days, "net_gex": net, "call_wall": max(ca, key=ca.get) if ca else None, "put_wall": max(pb, key=pb.get) if pb else None,
+                          "key_strike": key, "key_net": by[key]["c"] - by[key]["p"]}
+    return out
+
+
 def summarize(ticker, dte_max=45, band=0.25, max_age=900, timeout=40):
     sym = _sym(ticker)
     hit = _cache.get(sym)
@@ -91,6 +140,7 @@ def _compute(sym, data, dte_max, band):
             x = grid[i] + (grid[i + 1] - grid[i]) * (0 if b == a else -a / (b - a))
             if flip is None or abs(x - S) < abs(flip - S):
                 flip = x
+    hl = hedge_levels(opts, S, now, step=1.0, span=12.0)
     cv = sum(o["vol"] for o in opts if o["cp"] == "C")
     pv = sum(o["vol"] for o in opts if o["cp"] == "P")
     signed = absn = 0.0
@@ -114,12 +164,17 @@ def _compute(sym, data, dte_max, band):
         parts.append(f"put wall ${put_wall:g} ({pct(put_wall)})")
     if flip:
         parts.append(f"flip ${flip:.2f} ({pct(flip)})")
+    mo = hl.get("monthly")
+    if mo and mo.get("key_strike"):
+        parts.append(f"monthly {'magnet' if mo['key_net'] > 0 else 'repel'} ${mo['key_strike']:g} ({pct(mo['key_strike'])})")
+    if hl.get("dyn_up"):
+        parts.append(f"dynamic wall ${hl['dyn_up']:.2f} ({pct(hl['dyn_up'])})")
     if pcv is not None:
         parts.append(f"P/C vol {pcv}")
     if bias is not None and abs(bias) >= 0.1:
         parts.append("flow lean " + ("bullish" if bias > 0 else "bearish"))
     return {"spot": S, "regime": regime, "near_flip": near, "net_gex_m": round(net / 1e6, 1), "call_wall": call_wall, "put_wall": put_wall, "flip": flip,
-            "flow": {"call_vol": int(cv), "put_vol": int(pv), "pc_vol": pcv, "bias": bias}, "line": " · ".join(parts), "t": time.time()}
+            "flow": {"call_vol": int(cv), "put_vol": int(pv), "pc_vol": pcv, "bias": bias}, "monthly": mo, "dyn_up": hl.get("dyn_up"), "dyn_dn": hl.get("dyn_dn"), "line": " · ".join(parts), "t": time.time()}
 
 
 if __name__ == "__main__":
