@@ -29,6 +29,8 @@
     "#jk-pop{position:fixed;z-index:10000;max-width:min(420px,92vw);background:#0e1420;color:#dbe4f5;border:1px solid #34405a;border-radius:12px;padding:12px 14px;font:12px/1.45 ui-monospace,Menlo,monospace;box-shadow:0 12px 40px rgba(0,0,0,.5)}" +
     "#jk-pop h4{margin:0 0 6px;font:600 12px ui-monospace,Menlo,monospace;letter-spacing:.5px;text-transform:uppercase;color:#8fb4ff}#jk-pop .m{color:#8a96ad}#jk-pop code{color:#ffd479}#jk-pop pre{margin:6px 0 0;max-height:150px;overflow:auto;background:#0a0f18;border-radius:8px;padding:8px;color:#b9c6df;white-space:pre-wrap;word-break:break-word}" +
     "#jk-pop .x{position:absolute;right:10px;top:8px;cursor:pointer;color:#8a96ad}.jk-num{cursor:help}.jk-num:hover{text-decoration:underline dotted;text-underline-offset:3px}" +
+    "#jk-tr{position:fixed;inset:0;z-index:10001;background:rgba(5,8,14,.72);display:flex;align-items:flex-end;justify-content:center}#jk-tr .box{width:min(640px,100%);max-height:86vh;overflow:auto;background:#0e1420;color:#dbe4f5;border:1px solid #34405a;border-radius:16px 16px 0 0;padding:14px 16px calc(18px + env(safe-area-inset-bottom));font:13px/1.45 ui-monospace,Menlo,monospace}#jk-tr h3{margin:0 0 8px;font:600 13px ui-monospace,Menlo,monospace;letter-spacing:.5px;text-transform:uppercase;color:#8fb4ff;display:flex;justify-content:space-between}#jk-tr .row{display:flex;gap:8px;justify-content:space-between;padding:8px 6px;border-bottom:1px solid #1c2538;cursor:pointer}#jk-tr .row:hover{background:#151d2e}#jk-tr .up{color:#19e68c}#jk-tr .dn{color:#ff5470}#jk-tr .m{color:#8a96ad;font-size:11.5px}#jk-tr .st{border-left:2px solid #34405a;margin:10px 0 0 6px;padding:0 0 0 12px}#jk-tr .st h5{margin:0 0 3px;font:600 12px ui-monospace,Menlo,monospace;color:#ffd479}#jk-tr .back{cursor:pointer;color:#8fb4ff}" +
+    "#jk-why{position:sticky;top:0;z-index:9998;font:12px/1.4 ui-monospace,Menlo,monospace;background:rgba(18,26,40,.94);color:#dbe4f5;border-bottom:1px solid #2b3445;padding:6px 12px;display:flex;gap:8px;align-items:baseline;backdrop-filter:blur(6px)}#jk-why b{color:#8fb4ff;white-space:nowrap}#jk-why span{overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}#jk-why.tap span{-webkit-line-clamp:unset}" +
     "@keyframes jkup{from{background:rgba(25,230,140,.38)}to{background:transparent}}@keyframes jkdn{from{background:rgba(255,84,112,.38)}to{background:transparent}}@keyframes jkin{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}@keyframes jkdraw{from{stroke-dashoffset:var(--jk-len)}to{stroke-dashoffset:0}}" +
     "@media (prefers-reduced-motion:no-preference){.jk-up{animation:jkup .9s ease-out}.jk-dn{animation:jkdn .9s ease-out}.jk-in{animation:jkin .35s ease-out both}.jk-draw{stroke-dasharray:var(--jk-len);animation:jkdraw 1.1s ease-out both}}";
   document.head.appendChild(css);
@@ -46,9 +48,20 @@
       if (feed != null) parts.push('<span>prices <b class="' + cls(feed, 90, 300) + '">' + fmtAge(feed) + '</b></span>');
       if (d.last_scan_age != null) parts.push('<span>scan <b class="' + cls(d.last_scan_age, 120, 2400) + '">' + fmtAge(d.last_scan_age) + '</b></span>');
     }
+    parts.push('<button id="jk-tb" title="recent closed trades, and what happened in each">🧾 trades</button>');
     parts.push('<button id="jk-dl" title="download the latest data">⬇ data</button>');
     chip.innerHTML = parts.join("");
   }
+  var why = document.createElement("div"); why.id = "jk-why"; why.style.display = "none"; document.body.insertBefore(why, document.body.firstChild);
+  why.addEventListener("click", function () { why.classList.toggle("tap"); });
+  function tickWhy() {
+    var d = last.api, t = d && d.why;
+    if (!t) { why.style.display = "none"; return; }
+    why.style.display = "flex";
+    var txt = String(t).replace(/</g, "&lt;");
+    if (why.dataset.t !== txt) { why.dataset.t = txt; why.innerHTML = "<b>WHY NOT TRADING</b><span>" + txt + "</span>"; }
+  }
+  setInterval(tickWhy, 1500);
   setInterval(tickChip, 1000); tickChip();
   document.addEventListener("click", function (e) {
     if (e.target && e.target.id === "jk-dl") {
@@ -161,4 +174,38 @@
   var timer = null;
   new MutationObserver(function () { if (timer) return; timer = setTimeout(function () { timer = null; try { pass(); } catch (e) {} }, 120); }).observe(document.body, { childList: true, subtree: true, characterData: true });
   setTimeout(pass, 600);
+
+  // ---- TRADES: recent closed trades, click one for its timeline (signal, entry, while open, exit)
+  var tr = null;
+  function closeTr() { if (tr) { tr.remove(); tr = null; } }
+  function esc(x) { return String(x == null ? "" : x).replace(/[&<>]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]; }); }
+  function fmtT(t) { return t ? new Date(t * 1000).toLocaleString("en-US", { weekday: "short", hour: "numeric", minute: "2-digit", hour12: true }) : ""; }
+  function openTr(html) {
+    closeTr(); tr = document.createElement("div"); tr.id = "jk-tr"; tr.innerHTML = '<div class="box">' + html + "</div>"; document.body.appendChild(tr);
+    tr.addEventListener("click", function (e) { if (e.target === tr) closeTr(); });
+  }
+  function showList() {
+    openTr("<h3><span>Recent closed trades</span><span class='back' id='jk-x'>close ✕</span></h3><div class='m'>loading…</div>");
+    fetch("/trades?limit=40").then(function (r) { return r.json(); }).then(function (rows) {
+      var h = "<h3><span>Recent closed trades</span><span class='back' id='jk-x'>close ✕</span></h3>";
+      h += rows.length ? rows.map(function (r) { var p = r.pnl || 0; return "<div class='row' data-id='" + esc(r.id) + "'><span>" + esc(r.sym) + " " + esc((r.side || "").toUpperCase()) + "<div class='m'>" + fmtT(r.closed) + " · " + esc(r.rule) + "</div></span><b class='" + (p >= 0 ? "up" : "dn") + "'>" + (p >= 0 ? "+$" : "-$") + Math.abs(p).toFixed(2) + "</b></div>"; }).join("") : "<div class='m'>No closed trades yet.</div>";
+      tr.querySelector(".box").innerHTML = h;
+    }).catch(function () { tr.querySelector(".box").innerHTML = "<div class='m'>Could not load trades.</div>"; });
+  }
+  function showTrade(id) {
+    fetch("/trade?id=" + encodeURIComponent(id)).then(function (r) { return r.json(); }).then(function (d) {
+      if (!d || d.error) return;
+      var p = d.pnl || 0, h = "<h3><span class='back' id='jk-back'>‹ trades</span><span class='back' id='jk-x'>close ✕</span></h3><div style='font-size:15px;margin-bottom:4px'><b>" + esc(d.sym) + " " + esc((d.side || "").toUpperCase()) + "</b> <b class='" + (p >= 0 ? "up" : "dn") + "'>" + (p >= 0 ? "+$" : "-$") + Math.abs(p).toFixed(2) + "</b></div>";
+      h += d.steps.map(function (s) { return "<div class='st'><h5>" + esc(s.title) + (s.time ? " · <span class='m'>" + esc(s.time) + "</span>" : "") + "</h5>" + s.lines.map(function (l) { return "<div>" + esc(l) + "</div>"; }).join("") + "</div>"; }).join("");
+      tr.querySelector(".box").innerHTML = h;
+    });
+  }
+  document.addEventListener("click", function (e) {
+    var t = e.target; if (!t) return;
+    if (t.id === "jk-tb") { showList(); return; }
+    if (t.id === "jk-x") { closeTr(); return; }
+    if (t.id === "jk-back") { showList(); return; }
+    var row = t.closest && t.closest("#jk-tr .row"); if (row) showTrade(row.dataset.id);
+  });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeTr(); });
 })();
