@@ -31,6 +31,7 @@
     "#jk-pop .x{position:absolute;right:10px;top:8px;cursor:pointer;color:#8a96ad}.jk-num{cursor:help}.jk-num:hover{text-decoration:underline dotted;text-underline-offset:3px}" +
     "#jk-tr{position:fixed;inset:0;z-index:10001;background:rgba(5,8,14,.72);display:flex;align-items:flex-end;justify-content:center}#jk-tr .box{width:min(640px,100%);max-height:86vh;overflow:auto;background:#0e1420;color:#dbe4f5;border:1px solid #34405a;border-radius:16px 16px 0 0;padding:14px 16px calc(18px + env(safe-area-inset-bottom));font:13px/1.45 ui-monospace,Menlo,monospace}#jk-tr h3{margin:0 0 8px;font:600 13px ui-monospace,Menlo,monospace;letter-spacing:.5px;text-transform:uppercase;color:#8fb4ff;display:flex;justify-content:space-between}#jk-tr .row{display:flex;gap:8px;justify-content:space-between;padding:8px 6px;border-bottom:1px solid #1c2538;cursor:pointer}#jk-tr .row:hover{background:#151d2e}#jk-tr .up{color:#19e68c}#jk-tr .dn{color:#ff5470}#jk-tr .m{color:#8a96ad;font-size:11.5px}#jk-tr .st{border-left:2px solid #34405a;margin:10px 0 0 6px;padding:0 0 0 12px}#jk-tr .st h5{margin:0 0 3px;font:600 12px ui-monospace,Menlo,monospace;color:#ffd479}#jk-tr .back{cursor:pointer;color:#8fb4ff}" +
     "#jk-why{position:sticky;top:0;z-index:9998;font:12px/1.4 ui-monospace,Menlo,monospace;background:rgba(18,26,40,.94);color:#dbe4f5;border-bottom:1px solid #2b3445;padding:6px 12px;display:flex;gap:8px;align-items:baseline;backdrop-filter:blur(6px)}#jk-why b{color:#8fb4ff;white-space:nowrap}#jk-why span{overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}#jk-why.tap span{-webkit-line-clamp:unset}" +
+    "@media (max-width:700px){#jk-chip{right:6px;font-size:10px;padding:4px 9px;gap:7px}#jk-why{font-size:11px}}" +
     "@keyframes jkup{from{background:rgba(25,230,140,.38)}to{background:transparent}}@keyframes jkdn{from{background:rgba(255,84,112,.38)}to{background:transparent}}@keyframes jkin{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}@keyframes jkdraw{from{stroke-dashoffset:var(--jk-len)}to{stroke-dashoffset:0}}" +
     "@media (prefers-reduced-motion:no-preference){.jk-up{animation:jkup .9s ease-out}.jk-dn{animation:jkdn .9s ease-out}.jk-in{animation:jkin .35s ease-out both}.jk-draw{stroke-dasharray:var(--jk-len);animation:jkdraw 1.1s ease-out both}}";
   document.head.appendChild(css);
@@ -51,6 +52,7 @@
     parts.push('<button id="jk-tb" title="recent closed trades, and what happened in each">🧾 trades</button>');
     parts.push('<button id="jk-dl" title="download the latest data">⬇ data</button>');
     chip.innerHTML = parts.join("");
+    var cw = document.querySelector(".cmdw"); chip.style.bottom = ((cw ? cw.offsetHeight : 0) + 10) + "px";
   }
   var why = document.createElement("div"); why.id = "jk-why"; why.style.display = "none"; document.body.insertBefore(why, document.body.firstChild);
   why.addEventListener("click", function () { why.classList.toggle("tap"); });
