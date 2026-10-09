@@ -57,7 +57,8 @@ def hedge_levels(opts, S, now=None, step=0.25, span=5.0):
     inner = list(zip(prof, grid))[1:-1]                            # a peak on the grid's edge is just a profile still rising: not a wall
     up = [(p, s) for p, s in inner if s > S * 1.0005 and p > 0]
     dn = [(p, s) for p, s in inner if s < S * 0.9995 and p > 0]
-    out = {"dyn_up": max(up)[1] if up else None, "dyn_dn": max(dn)[1] if dn else None, "dyn_up_gex": max(up)[0] if up else None, "dyn_dn_gex": max(dn)[0] if dn else None,
+    acc = [(p, s) for p, s in inner if s < S * 0.9995 and p < 0]
+    out = {"dyn_accel": min(acc)[1] if acc else None, "dyn_accel_gex": min(acc)[0] if acc else None, "dyn_up": max(up)[1] if up else None, "dyn_dn": max(dn)[1] if dn else None, "dyn_up_gex": max(up)[0] if up else None, "dyn_dn_gex": max(dn)[0] if dn else None,
            "profile": [[round(s, 4), round(p / 1e6, 1)] for s, p in zip(grid[::4], prof[::4])]}
     me = monthly_expiry(now.date(), now)
     mo = [o for o in opts if o["exp"] == me]
