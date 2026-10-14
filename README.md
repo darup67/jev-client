@@ -46,3 +46,6 @@ Jev's own caveats (jev-1.13 jaggedness doc): it reads literally, it's poor at
 numbers, dates and counting (keep those in code), and it can be steered by
 adversarial text in the state. Coin descriptions are exactly that kind of text,
 so treat coin answers as a feature to measure, not a verdict.
+
+## Token optimizer (2026-10-14)
+`jevopt.py` + `policy.json` (hot-reloaded; `optimizer.enabled=false` restores the old behavior). Shared sqlite answer cache across all processes/lanes, quantized reuse keys (noisy fields ignored/bucketed per caller), single-flight (no double paying for the same state), audited reuse (a few % of hits re-asked fresh; divergence logged to audit.jsonl and auto-tunes TTL per caller), spend governor (projects month-end from the last 72 h; over plan -> low-priority callers cache-only, then high-priority TTL x2). `python3 jev.py --report` shows spend by caller, hit rate, divergence, TTL scales, projection.

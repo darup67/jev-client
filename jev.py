@@ -7,6 +7,7 @@
 
   python3 jev.py --ping     one tiny call; checks the key and the endpoint
   python3 jev.py --usage    calls, failures, tokens and cost per caller per day, plus this month vs the budget
+  python3 jev.py --report   month spend by caller, shared-cache hit rate, audit divergence, governor level and projection (optimizer: jevopt.py + policy.json)
   python3 jev.py --set-key  paste a TypeSafe key (hidden); stores it in the Keychain, then pings
 
 BUDGET: budget.json {"monthly_usd": 25} caps spend across ALL agents per calendar month.
@@ -112,6 +113,60 @@ def _coarse(o):
 
 
 def ask(state, questions, caller="?", model=MODEL, timeout=10, tries=3, reuse=None):
+    """Token-optimized front door (jevopt.py, policy.json): shared quantized answer cache, audited reuse, single-flight, spend governor. Anything that goes wrong in the optimizer falls back to _ask_raw."""
+    if reuse:
+        try:
+            import jevopt
+            if jevopt.enabled():
+                r = _ask_opt(jevopt, state, questions, caller, model, timeout, tries, reuse)
+                if r is not False:
+                    return r
+        except Exception as e:
+            print(f"jev: optimizer error, falling back ({e!r})", file=sys.stderr)
+    return _ask_raw(state, questions, caller, model, timeout, tries, reuse)
+
+
+def _ask_opt(opt, state, questions, caller, model, timeout, tries, reuse):
+    import random
+    name, base_ttl = reuse
+    cp = opt.caller_policy(caller)
+    k = opt.quant_key(state, questions, name, cp)
+    level = opt.pace(month_spend, recent_spend)
+    low = cp.get("priority") == "low"
+    ttl = opt.ttl_for(caller, base_ttl, level)
+    res, age = opt.get(k, ttl, 24 * 3600 if (low and level >= 1) else 0)
+    pol = opt.policy().get("optimizer") or {}
+
+    def hit(r, a, why):
+        _log({"t": time.time(), "caller": caller, "model": r.get("model"), "ok": True, "ms": 0, "in": 0, "out": 0, "cached": True, "opt": why, "age": round(a or 0), "q": sorted(questions)})
+        return {**r, "_cached": True}
+    if res is not None:
+        if level == 0 and random.random() < float(pol.get("audit_p", 0.05)):      # audit: pay for a fresh answer, measure how far the reused one was
+            fresh = _ask_raw(state, questions, caller, model, timeout, tries, None)
+            if fresh:
+                d = opt.divergence(res.get("answers"), fresh.get("answers"))
+                if d is not None:
+                    opt.record_audit(caller, name, age, d)
+                opt.put(k, caller, fresh)
+                return fresh
+        return hit(res, age, "shared")
+    if low and level >= 1:
+        _log({"t": time.time(), "caller": caller, "model": model, "ok": False, "ms": 0, "err": "paced: projected spend over plan, low-priority caller served from cache only", "q": sorted(questions)})
+        return None
+    if not opt.lead(k):                                                           # another process is already paying for this exact situation: wait for its answer
+        res, age = opt.wait_for(k, ttl)
+        if res is not None:
+            return hit(res, age, "singleflight")
+    try:
+        fresh = _ask_raw(state, questions, caller, model, timeout, tries, None)
+    finally:
+        opt.done(k)
+    if fresh:
+        opt.put(k, caller, fresh)
+    return fresh
+
+
+def _ask_raw(state, questions, caller="?", model=MODEL, timeout=10, tries=3, reuse=None):
     """POST one state and its questions. Returns {"model", "answers", "usage"} or None.
     reuse=(name, ttl_seconds): within ttl, the SAME question set on a state that matches to 2 significant figures returns the earlier answer
     (marked "_cached": True, logged with zero tokens) instead of paying again. Nothing is reused across different questions or a changed state."""
@@ -194,6 +249,65 @@ def usage():
     print(f"\n{time.strftime('%Y-%m')}: ${spent:.4f} of the ${cap:.2f} monthly budget ({100 * spent / cap:.2f}%)")
 
 
+def recent_spend(hours=72):
+    """USD spent by every caller in the last `hours` (reads only the tail of calls.jsonl)."""
+    cut, tok = time.time() - hours * 3600, 0
+    try:
+        with open(LOG, "rb") as f:
+            f.seek(0, 2)
+            f.seek(max(0, f.tell() - 24_000_000))
+            data = f.read()
+        for line in data.splitlines()[1:]:
+            try:
+                r = json.loads(line)
+            except ValueError:
+                continue
+            if r["t"] >= cut:
+                tok += r.get("in") or 0
+    except OSError:
+        pass
+    return tok / 1e6 * USD_PER_MTOK
+
+
+def report():
+    """Spend by caller, cache hit rate, audit divergence, TTL scales and the month projection."""
+    now, month = time.time(), time.strftime("%Y-%m")
+    by = {}
+    for line in open(LOG):
+        try:
+            r = json.loads(line)
+        except ValueError:
+            continue
+        if time.strftime("%Y-%m", time.localtime(r["t"])) != month:
+            continue
+        a = by.setdefault(r["caller"], {"calls": 0, "paid": 0, "hit": 0, "tok": 0, "opt": 0, "day": 0.0})
+        a["calls"] += 1
+        a["hit"] += 1 if r.get("cached") else 0
+        a["opt"] += 1 if r.get("opt") else 0
+        a["paid"] += 1 if r.get("in") else 0
+        a["tok"] += r.get("in") or 0
+        if now - r["t"] < 86400:
+            a["day"] += (r.get("in") or 0) / 1e6 * USD_PER_MTOK
+    print(f"{'caller':<16}{'calls':>7}{'paid':>7}{'reused':>8}{'shared':>8}{'hit%':>6}{'$ month':>9}{'$ 24h':>8}")
+    for c, a in sorted(by.items(), key=lambda x: -x[1]["tok"]):
+        print(f"{c:<16}{a['calls']:>7}{a['paid']:>7}{a['hit']:>8}{a['opt']:>8}{100 * a['hit'] / max(1, a['calls']):>5.0f}%{a['tok'] / 1e6 * USD_PER_MTOK:>9.3f}{a['day']:>8.3f}")
+    spent, cap = month_spend()
+    try:
+        import jevopt
+        lvl = jevopt.pace(month_spend, recent_spend)
+        print(f"\n{month}: ${spent:.2f} of ${cap:.2f} · last 72 h ${recent_spend(72):.2f} · projected month-end ${jevopt.projection():.2f} · governor level {lvl} · optimizer {'ON' if jevopt.enabled() else 'OFF'}")
+        g = jevopt.govern()
+        print("TTL scales:", g.get("ttl_scale") or "default (1.0)")
+        aud = {}
+        for line in open(jevopt.AUDIT) if os.path.exists(jevopt.AUDIT) else []:
+            r = json.loads(line)
+            aud.setdefault(r["caller"], []).append(r["div"])
+        for c, d in aud.items():
+            print(f"audit {c}: {len(d)} checks, mean divergence {sum(d) / len(d):.3f}, worst {max(d):.3f} (0 = reused answer identical to a fresh one)")
+    except Exception as e:
+        print("optimizer info unavailable:", e)
+
+
 def set_key():
     """Prompt for the key without echo and store it in the Keychain (service typesafe-jev).
     Run in your own terminal; the key never touches a file or shell history."""
@@ -223,6 +337,8 @@ if __name__ == "__main__":
         sys.exit(set_key())
     if "--usage" in sys.argv:
         usage()
+    elif "--report" in sys.argv:
+        report()
     elif "--ping" in sys.argv:
         r = ask("Help! My payouts have been failing for 3 days.",
                 {"is_urgent": {"type": "noul", "instructions": "Does this message convey urgency?"}},

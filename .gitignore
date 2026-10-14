@@ -1,3 +1,7 @@
 __pycache__/
 calls.jsonl
 .DS_Store
+cache.db
+cache.db-*
+audit.jsonl
+govern.json

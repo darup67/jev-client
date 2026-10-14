@@ -1,0 +1,72 @@
+{
+ "optimizer": {
+  "enabled": true,
+  "audit_p": 0.06,
+  "max_div": 0.1,
+  "pace_warn": 0.9,
+  "pace_cut": 1.05
+ },
+ "callers": {
+  "*": {
+   "priority": "high",
+   "rel_step": 0.15
+  },
+  "jev-majors": {
+   "priority": "high",
+   "ttl_s": 1200,
+   "rel_step": 0.25,
+   "ignore": [
+    "price",
+    "max_leverage",
+    "book.bid_depth_usd_0.5pct",
+    "book.ask_depth_usd_0.5pct",
+    "funding.annualized_pct",
+    "open_interest.usd_millions"
+   ],
+   "abs": {
+    "change.15m": 0.003,
+    "change.1h": 0.005,
+    "change.4h": 0.01,
+    "change.24h": 0.02,
+    "momentum.rsi_1h": 4,
+    "momentum.rsi_4h": 4,
+    "spread_bps": 1.0,
+    "book.imbalance": 0.15,
+    "open_interest.change_1h": 0.01,
+    "open_interest.change_24h": 0.03,
+    "premium_pct": 0.02,
+    "momentum.volume_vs_24h_avg": 0.4
+   }
+  },
+  "jev-markets": {
+   "priority": "high",
+   "ttl_s": 300,
+   "rel_step": 0.25,
+   "ignore": [
+    "price",
+    "vwap",
+    "atr_5m",
+    "range20_high",
+    "range20_low",
+    "horizon"
+   ],
+   "abs": {
+    "*_atr": 0.25,
+    "move_*": 0.2,
+    "rsi_1m": 4,
+    "volume_surge": 0.3,
+    "range_position_20m": 0.15,
+    "phantom_1h_line_atr": 0.5
+   }
+  },
+  "jev-predict": {
+   "priority": "high"
+  },
+  "paper-lab": {
+   "priority": "low"
+  },
+  "jev-desk": {
+   "priority": "low"
+  }
+ }
+}
