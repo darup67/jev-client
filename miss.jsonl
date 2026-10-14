@@ -1,0 +1,90 @@
+{"t": 1792009674, "name": "majors:AAVE:coin#4f6660", "n_diff": 1, "diff": ["spread_bps"]}
+{"t": 1792009675, "name": "majors:ADA:coin#4f6660", "n_diff": 1, "diff": ["book.imbalance"]}
+{"t": 1792009676, "name": "majors:DOGE:coin#4f6660", "n_diff": 2, "diff": ["book.imbalance", "trend.15m.price_vs_fast"]}
+{"t": 1792009677, "name": "majors:kPEPE:coin#4f6660", "n_diff": 4, "diff": ["change.15m", "open_interest.change_24h", "trend.15m.fast_vs_slow", "trend.15m.price_vs_fast"]}
+{"t": 1792009678, "name": "majors:LINK:coin#4f6660", "n_diff": 3, "diff": ["premium_pct", "spread_bps", "trend.15m.fast_vs_slow"]}
+{"t": 1792009678, "name": "majors:LTC:coin#4f6660", "n_diff": 2, "diff": ["open_interest.change_24h", "spread_bps"]}
+{"t": 1792009679, "name": "majors:SOL:coin#4f6660", "n_diff": 2, "diff": ["change.15m", "trend.15m.price_vs_fast"]}
+{"t": 1792009679, "name": "majors:SUI:coin#4f6660", "n_diff": 3, "diff": ["book.imbalance", "premium_pct", "trend.15m.price_vs_fast"]}
+{"t": 1792009680, "name": "majors:XRP:coin#4f6660", "n_diff": 1, "diff": ["book.imbalance"]}
+{"t": 1792009681, "name": "majors:SILVER:coin#4f6660", "n_diff": 1, "diff": ["open_interest.change_1h"]}
+{"t": 1792009681, "name": "majors:PLATINUM:coin#4f6660", "n_diff": 1, "diff": ["book.imbalance"]}
+{"t": 1792009681, "name": "majors:COPPER:coin#4f6660", "n_diff": 1, "diff": ["open_interest.change_1h"]}
+{"t": 1792009686, "name": "majors:AAVE:coin#87caed", "n_diff": 4, "diff": ["book.imbalance", "open_interest.change_24h", "positioning.book_imbalance_0.25pct", "spread_bps"]}
+{"t": 1792009686, "name": "majors:ADA:coin#ec5b48", "n_diff": 2, "diff": ["positioning.long_short_account_ratio", "spread_bps"]}
+{"t": 1792009686, "name": "majors:BNB:coin#87caed", "n_diff": 3, "diff": ["book.imbalance", "positioning.book_imbalance_0.1pct", "positioning.book_imbalance_0.25pct"]}
+{"t": 1792009687, "name": "majors:DOGE:coin#ec5b48", "n_diff": 2, "diff": ["premium_pct", "trend.15m.price_vs_fast"]}
+{"t": 1792009687, "name": "majors:ETH:coin#ec5b48", "n_diff": 3, "diff": ["book.imbalance", "positioning.book_imbalance_0.1pct", "positioning.book_imbalance_0.25pct"]}
+{"t": 1792009687, "name": "majors:kSHIB:coin#87caed", "n_diff": 2, "diff": ["positioning.book_imbalance_0.1pct", "premium_pct"]}
+{"t": 1792009688, "name": "majors:LINK:coin#ec5b48", "n_diff": 8, "diff": ["book.imbalance", "open_interest.change_1h", "phantom.shift_line_1h_pct", "positioning.book_imbalance_0.1pct", "positioning.book_imbalance_0.25pct", "premium_pct", "spread_bps", "trend.15m.fast_vs_slow"]}
+{"t": 1792009688, "name": "majors:LTC:coin#87caed", "n_diff": 3, "diff": ["change.24h", "open_interest.change_24h", "premium_pct"]}
+{"t": 1792009688, "name": "majors:NEAR:coin#87caed", "n_diff": 4, "diff": ["book.imbalance", "positioning.book_imbalance_0.1pct", "positioning.book_imbalance_0.25pct", "spread_bps"]}
+{"t": 1792009688, "name": "majors:SOL:coin#ec5b48", "n_diff": 4, "diff": ["change.15m", "funding.now_per_hour_pct", "positioning.book_imbalance_0.1pct", "trend.15m.price_vs_fast"]}
+{"t": 1792009688, "name": "majors:SUI:coin#87caed", "n_diff": 7, "diff": ["book.imbalance", "change.24h", "positioning.book_imbalance_0.1pct", "positioning.book_imbalance_0.25pct", "premium_pct", "spread_bps", "trend.15m.price_vs_fast"]}
+{"t": 1792009689, "name": "majors:XRP:coin#ec5b48", "n_diff": 2, "diff": ["positioning.book_imbalance_0.1pct", "positioning.book_imbalance_0.25pct"]}
+{"t": 1792009689, "name": "majors:ZEC:coin#87caed", "n_diff": 3, "diff": ["change.15m", "positioning.book_imbalance_0.1pct", "premium_pct"]}
+{"t": 1792009689, "name": "majors:SILVER:coin#87caed", "n_diff": 4, "diff": ["book.imbalance", "open_interest.change_1h", "positioning.book_imbalance_0.1pct", "positioning.book_imbalance_0.25pct"]}
+{"t": 1792009690, "name": "majors:PLATINUM:coin#87caed", "n_diff": 1, "diff": ["positioning.book_imbalance_0.1pct"]}
+{"t": 1792009690, "name": "majors:PALLADIUM:coin#87caed", "n_diff": 2, "diff": ["positioning.book_imbalance_0.1pct", "premium_pct"]}
+{"t": 1792009690, "name": "majors:COPPER:coin#87caed", "n_diff": 1, "diff": ["open_interest.change_1h"]}
+{"t": 1792010139, "name": "majors:BTC:coin#8eb806", "n_diff": 6, "diff": ["momentum.rsi_1h", "positioning.ls_ratio_change_1h_pct", "positioning.open_interest_change_1h_pct", "positioning.open_interest_change_4h_pct", "positioning.taker_buy_share_1h", "trend.15m.fast_vs_slow"]}
+{"t": 1792010140, "name": "majors:AAVE:coin#87caed", "n_diff": 6, "diff": ["book.imbalance", "change.1h", "momentum.volume_vs_24h_avg", "phantom.shift_line_1h_pct", "positioning.book_imbalance_0.25pct", "trend.1h.price_vs_fast"]}
+{"t": 1792010140, "name": "majors:ADA:coin#ec5b48", "n_diff": 3, "diff": ["positioning.book_imbalance_0.1pct", "spread_bps", "trend.4h.price_vs_fast"]}
+{"t": 1792010140, "name": "majors:BNB:coin#87caed", "n_diff": 4, "diff": ["book.imbalance", "momentum.rsi_1h", "positioning.book_imbalance_0.1pct", "positioning.book_imbalance_0.25pct"]}
+{"t": 1792010140, "name": "majors:DOGE:coin#ec5b48", "n_diff": 6, "diff": ["book.imbalance", "change.24h", "positioning.book_imbalance_0.1pct", "positioning.book_imbalance_0.25pct", "positioning.open_interest_change_4h_pct", "positioning.taker_buy_share_1h"]}
+{"t": 1792010141, "name": "majors:ETH:coin#ec5b48", "n_diff": 3, "diff": ["momentum.volume_vs_24h_avg", "open_interest.change_1h", "positioning.open_interest_change_4h_pct"]}
+{"t": 1792010141, "name": "majors:kSHIB:coin#87caed", "n_diff": 3, "diff": ["momentum.volume_vs_24h_avg", "positioning.book_imbalance_0.1pct", "spread_bps"]}
+{"t": 1792010141, "name": "majors:LINK:coin#ec5b48", "n_diff": 11, "diff": ["book.imbalance", "momentum.atr_pct_1h", "momentum.rsi_1h", "open_interest.change_1h", "positioning.book_imbalance_0.25pct", "positioning.open_interest_change_4h_pct", "positioning.taker_buy_share_1h", "premium_pct", "spread_bps", "trend.15m.fast_vs_slow", "trend.1h.price_vs_fast"]}
+{"t": 1792010141, "name": "majors:LTC:coin#87caed", "n_diff": 7, "diff": ["book.imbalance", "change.1h", "momentum.volume_vs_24h_avg", "open_interest.change_24h", "positioning.book_imbalance_0.1pct", "positioning.book_imbalance_0.25pct", "trend.1h.price_vs_fast"]}
+{"t": 1792010142, "name": "majors:SOL:coin#ec5b48", "n_diff": 3, "diff": ["funding.now_per_hour_pct", "positioning.book_imbalance_0.1pct", "positioning.open_interest_change_4h_pct"]}
+{"t": 1792010142, "name": "majors:SUI:coin#87caed", "n_diff": 4, "diff": ["positioning.book_imbalance_0.1pct", "premium_pct", "spread_bps", "trend.1h.price_vs_fast"]}
+{"t": 1792010142, "name": "majors:XRP:coin#ec5b48", "n_diff": 6, "diff": ["book.imbalance", "momentum.range_24h_pct", "positioning.book_imbalance_0.25pct", "positioning.open_interest_change_4h_pct", "positioning.taker_buy_share_1h", "trend.1h.price_vs_fast"]}
+{"t": 1792010142, "name": "majors:ZEC:coin#87caed", "n_diff": 13, "diff": ["book.imbalance", "change.1h", "momentum.volume_vs_24h_avg", "open_interest.change_1h", "open_interest.change_24h", "phantom.shift_line_1h_pct", "positioning.book_imbalance_0.1pct", "positioning.book_imbalance_0.25pct", "spread_bps", "trend.15m.price_vs_fast", "trend.15m.slope_5bars", "trend.1h.price_vs_fast", "trend.1h.slope_5bars"]}
+{"t": 1792010142, "name": "majors:GOLD:coin#87caed", "n_diff": 1, "diff": ["trend.15m.fast_vs_slow"]}
+{"t": 1792010143, "name": "majors:SILVER:coin#87caed", "n_diff": 5, "diff": ["book.imbalance", "positioning.book_imbalance_0.1pct", "positioning.book_imbalance_0.25pct", "trend.15m.price_vs_fast", "trend.1h.slope_5bars"]}
+{"t": 1792010143, "name": "majors:PLATINUM:coin#87caed", "n_diff": 3, "diff": ["open_interest.change_1h", "positioning.book_imbalance_0.1pct", "spread_bps"]}
+{"t": 1792010143, "name": "majors:PALLADIUM:coin#87caed", "n_diff": 5, "diff": ["funding.now_per_hour_pct", "momentum.rsi_1h", "open_interest.change_1h", "premium_pct", "spread_bps"]}
+{"t": 1792010143, "name": "majors:COPPER:coin#87caed", "n_diff": 2, "diff": ["momentum.rsi_4h", "spread_bps"]}
+{"t": 1792010189, "name": "majors:BTC:coin#0e862e", "n_diff": 3, "diff": ["book.imbalance", "momentum.rsi_1h", "trend.15m.fast_vs_slow"]}
+{"t": 1792010191, "name": "majors:AAVE:coin#4f6660", "n_diff": 6, "diff": ["change.1h", "momentum.volume_vs_24h_avg", "open_interest.change_24h", "premium_pct", "spread_bps", "trend.1h.price_vs_fast"]}
+{"t": 1792010192, "name": "majors:ADA:coin#4f6660", "n_diff": 2, "diff": ["premium_pct", "trend.4h.price_vs_fast"]}
+{"t": 1792010193, "name": "majors:BNB:coin#4f6660", "n_diff": 3, "diff": ["book.imbalance", "momentum.rsi_1h", "premium_pct"]}
+{"t": 1792010195, "name": "majors:DOGE:coin#4f6660", "n_diff": 3, "diff": ["book.imbalance", "change.24h", "premium_pct"]}
+{"t": 1792010196, "name": "majors:ETH:coin#4f6660", "n_diff": 3, "diff": ["momentum.volume_vs_24h_avg", "open_interest.change_1h", "premium_pct"]}
+{"t": 1792010197, "name": "majors:kPEPE:coin#4f6660", "n_diff": 9, "diff": ["book.imbalance", "change.15m", "change.24h", "momentum.atr_pct_1h", "momentum.volume_vs_24h_avg", "open_interest.change_1h", "trend.15m.fast_vs_slow", "trend.15m.price_vs_fast", "trend.1h.price_vs_fast"]}
+{"t": 1792010198, "name": "majors:kSHIB:coin#4f6660", "n_diff": 1, "diff": ["momentum.volume_vs_24h_avg"]}
+{"t": 1792010199, "name": "majors:LINK:coin#4f6660", "n_diff": 7, "diff": ["book.imbalance", "momentum.atr_pct_1h", "momentum.rsi_1h", "premium_pct", "spread_bps", "trend.15m.fast_vs_slow", "trend.1h.price_vs_fast"]}
+{"t": 1792010201, "name": "majors:SOL:coin#4f6660", "n_diff": 1, "diff": ["funding.now_per_hour_pct"]}
+{"t": 1792010202, "name": "majors:SUI:coin#4f6660", "n_diff": 3, "diff": ["premium_pct", "spread_bps", "trend.1h.price_vs_fast"]}
+{"t": 1792010202, "name": "majors:XRP:coin#4f6660", "n_diff": 4, "diff": ["book.imbalance", "momentum.range_24h_pct", "open_interest.change_24h", "trend.1h.price_vs_fast"]}
+{"t": 1792010204, "name": "majors:GOLD:coin#4f6660", "n_diff": 1, "diff": ["trend.15m.fast_vs_slow"]}
+{"t": 1792010204, "name": "majors:SILVER:coin#4f6660", "n_diff": 2, "diff": ["trend.15m.price_vs_fast", "trend.1h.slope_5bars"]}
+{"t": 1792010204, "name": "majors:PLATINUM:coin#4f6660", "n_diff": 1, "diff": ["open_interest.change_1h"]}
+{"t": 1792010205, "name": "majors:PALLADIUM:coin#4f6660", "n_diff": 4, "diff": ["funding.now_per_hour_pct", "momentum.rsi_1h", "open_interest.change_1h", "premium_pct"]}
+{"t": 1792010205, "name": "majors:COPPER:coin#4f6660", "n_diff": 2, "diff": ["momentum.rsi_4h", "spread_bps"]}
+{"t": 1792010287, "name": "majors:AAVE:coin#4f6660", "n_diff": 4, "diff": ["change.15m", "spread_bps", "trend.15m.price_vs_fast", "trend.15m.slope_5bars"]}
+{"t": 1792010288, "name": "majors:ADA:coin#4f6660", "n_diff": 4, "diff": ["change.15m", "spread_bps", "trend.15m.price_vs_fast", "trend.15m.slope_5bars"]}
+{"t": 1792010288, "name": "majors:BNB:coin#4f6660", "n_diff": 1, "diff": ["premium_pct"]}
+{"t": 1792010289, "name": "majors:DOGE:coin#4f6660", "n_diff": 1, "diff": ["book.imbalance"]}
+{"t": 1792010290, "name": "majors:ETH:coin#4f6660", "n_diff": 1, "diff": ["premium_pct"]}
+{"t": 1792010290, "name": "majors:kPEPE:coin#4f6660", "n_diff": 5, "diff": ["book.imbalance", "change.24h", "open_interest.change_1h", "premium_pct", "spread_bps"]}
+{"t": 1792010291, "name": "majors:LINK:coin#4f6660", "n_diff": 1, "diff": ["trend.15m.price_vs_fast"]}
+{"t": 1792010292, "name": "majors:LTC:coin#4f6660", "n_diff": 7, "diff": ["book.imbalance", "change.1h", "momentum.volume_vs_24h_avg", "premium_pct", "spread_bps", "trend.15m.price_vs_fast", "trend.1h.price_vs_fast"]}
+{"t": 1792010293, "name": "majors:SUI:coin#4f6660", "n_diff": 1, "diff": ["spread_bps"]}
+{"t": 1792010293, "name": "majors:XRP:coin#4f6660", "n_diff": 3, "diff": ["book.imbalance", "open_interest.change_24h", "trend.15m.price_vs_fast"]}
+{"t": 1792010294, "name": "majors:SILVER:coin#4f6660", "n_diff": 1, "diff": ["book.imbalance"]}
+{"t": 1792010294, "name": "majors:PALLADIUM:coin#4f6660", "n_diff": 1, "diff": ["premium_pct"]}
+{"t": 1792010294, "name": "majors:COPPER:coin#4f6660", "n_diff": 1, "diff": ["book.imbalance"]}
+{"t": 1792010298, "name": "majors:BTC:coin#8eb806", "n_diff": 1, "diff": ["positioning.ls_ratio_change_1h_pct"]}
+{"t": 1792010298, "name": "majors:AAVE:coin#87caed", "n_diff": 5, "diff": ["change.15m", "positioning.book_imbalance_0.1pct", "premium_pct", "trend.15m.price_vs_fast", "trend.15m.slope_5bars"]}
+{"t": 1792010298, "name": "majors:ADA:coin#ec5b48", "n_diff": 9, "diff": ["book.imbalance", "change.15m", "phantom.shift_line_1h_pct", "positioning.book_imbalance_0.1pct", "positioning.book_imbalance_0.25pct", "positioning.long_short_account_ratio", "premium_pct", "trend.15m.price_vs_fast", "trend.15m.slope_5bars"]}
+{"t": 1792010298, "name": "majors:BNB:coin#87caed", "n_diff": 3, "diff": ["book.imbalance", "positioning.book_imbalance_0.1pct", "positioning.book_imbalance_0.25pct"]}
+{"t": 1792010299, "name": "majors:ETH:coin#ec5b48", "n_diff": 2, "diff": ["phantom.shift_line_1h_pct", "positioning.open_interest_change_1h_pct"]}
+{"t": 1792010299, "name": "majors:kSHIB:coin#87caed", "n_diff": 1, "diff": ["positioning.book_imbalance_0.1pct"]}
+{"t": 1792010299, "name": "majors:LINK:coin#ec5b48", "n_diff": 6, "diff": ["open_interest.change_1h", "positioning.long_short_account_ratio", "positioning.ls_ratio_change_1h_pct", "positioning.open_interest_change_4h_pct", "spread_bps", "trend.15m.price_vs_fast"]}
+{"t": 1792010300, "name": "majors:LTC:coin#87caed", "n_diff": 4, "diff": ["open_interest.change_24h", "premium_pct", "spread_bps", "trend.15m.price_vs_fast"]}
+{"t": 1792010300, "name": "majors:SOL:coin#ec5b48", "n_diff": 1, "diff": ["positioning.ls_ratio_change_1h_pct"]}
+{"t": 1792010300, "name": "majors:SUI:coin#87caed", "n_diff": 1, "diff": ["spread_bps"]}
+{"t": 1792010300, "name": "majors:XRP:coin#ec5b48", "n_diff": 2, "diff": ["spread_bps", "trend.15m.price_vs_fast"]}
+{"t": 1792010300, "name": "majors:ZEC:coin#87caed", "n_diff": 6, "diff": ["book.imbalance", "positioning.book_imbalance_0.1pct", "positioning.book_imbalance_0.25pct", "premium_pct", "spread_bps", "trend.15m.price_vs_fast"]}
+{"t": 1792010301, "name": "majors:PALLADIUM:coin#87caed", "n_diff": 2, "diff": ["premium_pct", "spread_bps"]}

@@ -135,6 +135,8 @@ def _ask_opt(opt, state, questions, caller, model, timeout, tries, reuse):
     low = cp.get("priority") == "low"
     ttl = opt.ttl_for(caller, base_ttl, level)
     res, age = opt.get(k, ttl, 24 * 3600 if (low and level >= 1) else 0)
+    if res is None:
+        res, age = opt.soft_get(name, state, cp, ttl)
     pol = opt.policy().get("optimizer") or {}
 
     def hit(r, a, why):
@@ -147,9 +149,11 @@ def _ask_opt(opt, state, questions, caller, model, timeout, tries, reuse):
                 d = opt.divergence(res.get("answers"), fresh.get("answers"))
                 if d is not None:
                     opt.record_audit(caller, name, age, d)
-                opt.put(k, caller, fresh)
+                opt.put(k, caller, fresh, name, opt.quant_parts(state, name, cp))
                 return fresh
         return hit(res, age, "shared")
+    if pol.get("diagnose", True):
+        opt.note_miss(name, state, cp)
     if low and level >= 1:
         _log({"t": time.time(), "caller": caller, "model": model, "ok": False, "ms": 0, "err": "paced: projected spend over plan, low-priority caller served from cache only", "q": sorted(questions)})
         return None
@@ -162,7 +166,7 @@ def _ask_opt(opt, state, questions, caller, model, timeout, tries, reuse):
     finally:
         opt.done(k)
     if fresh:
-        opt.put(k, caller, fresh)
+        opt.put(k, caller, fresh, name, opt.quant_parts(state, name, cp))
     return fresh
 
 

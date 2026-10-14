@@ -30,12 +30,23 @@
     "change.24h": 0.02,
     "momentum.rsi_1h": 4,
     "momentum.rsi_4h": 4,
-    "spread_bps": 1.0,
-    "book.imbalance": 0.15,
+    "spread_bps": 2.0,
+    "book.imbalance": 0.3,
     "open_interest.change_1h": 0.01,
     "open_interest.change_24h": 0.03,
-    "premium_pct": 0.02,
-    "momentum.volume_vs_24h_avg": 0.4
+    "premium_pct": 0.05,
+    "momentum.volume_vs_24h_avg": 0.4,
+    "positioning.book_imbalance_*": 0.3,
+    "positioning.fear_greed_index_0_100": 10,
+    "positioning.liquidated_*": 5.0,
+    "positioning.long_short_account_ratio": 0.15,
+    "positioning.ls_ratio_change_1h_pct": 2.0,
+    "positioning.open_interest_change_*": 1.0,
+    "positioning.taker_buy_share_1h": 0.05,
+    "phantom.shift_line_1h_pct": 1.0,
+    "trend.*.slope_5bars": 0.002,
+    "trend.*.price_vs_fast": 0.003,
+    "funding.now_per_hour_pct": 0.002
    }
   },
   "jev-markets": {

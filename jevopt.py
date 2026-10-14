@@ -52,6 +52,12 @@ def _conn():
             c.execute("PRAGMA synchronous=NORMAL")
             c.execute("CREATE TABLE IF NOT EXISTS cache(k TEXT PRIMARY KEY, t REAL, caller TEXT, res TEXT)")
             c.execute("CREATE TABLE IF NOT EXISTS inflight(k TEXT PRIMARY KEY, t REAL)")
+            for col in ("name TEXT", "q TEXT"):
+                try:
+                    c.execute(f"ALTER TABLE cache ADD COLUMN {col}")
+                except sqlite3.OperationalError:
+                    pass
+            c.execute("CREATE INDEX IF NOT EXISTS cache_name ON cache(name, t)")
             _db["c"] = c
         return _db["c"]
 
@@ -66,6 +72,48 @@ def _flat(o, p=""):
             yield from _flat(v, f"{p}{i}.")
     else:
         yield p[:-1], o
+
+
+def quant_parts(state, name, cp):
+    """The quantized (path, value) list used for the key (for miss diagnostics)."""
+    ignore, absr, rel = cp.get("ignore") or [], cp.get("abs") or {}, float(cp.get("rel_step") or 0.15)
+    lg = math.log(1 + rel)
+    q = []
+    for path, v in _flat(state):
+        if any(fnmatch.fnmatch(path, g) for g in ignore):
+            continue
+        if isinstance(v, bool) or v is None or isinstance(v, str):
+            q.append((path, v))
+        elif isinstance(v, (int, float)):
+            step = next((s for g, s in absr.items() if fnmatch.fnmatch(path, g)), None)
+            if step:
+                q.append((path, round(v / step)))
+            elif v == 0 or abs(v) < 1e-9:
+                q.append((path, 0))
+            else:
+                q.append((path, (1 if v > 0 else -1) * round(math.log(abs(v)) / lg)))
+        else:
+            q.append((path, str(v)))
+    return q
+
+
+def note_miss(name, state, cp):
+    """On a miss, log which quantized fields differ from the previous state of the same name (data for tuning the buckets)."""
+    try:
+        qp = quant_parts(state, name, cp)
+        q = dict(qp)
+        name = name + "#" + hashlib.md5(",".join(sorted(q)).encode()).hexdigest()[:6]      # lanes with a different state SHAPE (A/B arms) are compared only with their own kind
+        c = _conn()
+        c.execute("CREATE TABLE IF NOT EXISTS last(name TEXT PRIMARY KEY, q TEXT)")
+        r = c.execute("SELECT q FROM last WHERE name=?", (name,)).fetchone()
+        if r:
+            old = json.loads(r[0])
+            diff = [p for p in q if q[p] != old.get(p)] + [p for p in old if p not in q]
+            with open(os.path.join(DIR, "miss.jsonl"), "a") as f:
+                f.write(json.dumps({"t": round(time.time()), "name": name, "n_diff": len(diff), "diff": diff[:20]}) + "\n")
+        c.execute("INSERT OR REPLACE INTO last(name,q) VALUES(?,?)", (name, json.dumps(q)))
+    except Exception:
+        pass
 
 
 def quant_key(state, questions, name, cp):
@@ -111,14 +159,50 @@ def get(k, ttl, stale_ok_s=0):
     return None, None
 
 
-def put(k, caller, res):
+def put(k, caller, res, name=None, q=None):
     try:
         c = _conn()
-        c.execute("INSERT OR REPLACE INTO cache(k,t,caller,res) VALUES(?,?,?,?)", (k, time.time(), caller, json.dumps(res, default=str)))
+        c.execute("INSERT OR REPLACE INTO cache(k,t,caller,res,name,q) VALUES(?,?,?,?,?,?)", (k, time.time(), caller, json.dumps(res, default=str), name, json.dumps(q) if q is not None else None))
         if int(time.time()) % 50 == 0:
             c.execute("DELETE FROM cache WHERE t<?", (time.time() - 6 * 3600,))
     except Exception:
         pass
+
+
+def soft_get(name, state, cp, ttl):
+    """Boundary-tolerant reuse: a recent answer of the same name whose quantized state differs in at most `soft_fields` numeric fields, each by at most one bucket, and in no categorical field.
+    (Exact-bucket equality flips on a single field crossing a bucket edge; this removes that artefact. The audit measures whether it was safe.)"""
+    maxf = int(cp.get("soft_fields", 2))
+    if maxf <= 0:
+        return None, None
+    try:
+        q = dict(quant_parts(state, name, cp))
+        rows = _conn().execute("SELECT t, res, q FROM cache WHERE name=? AND t>? ORDER BY t DESC LIMIT 8", (name, time.time() - ttl)).fetchall()
+        for t, res, oq in rows:
+            if not oq:
+                continue
+            old = {p: v for p, v in json.loads(oq)}
+            if set(old) != set(q):
+                continue
+            nd = 0
+            ok = True
+            for p, v in q.items():
+                o = old[p]
+                if v == o:
+                    continue
+                if isinstance(v, (int, float)) and not isinstance(v, bool) and isinstance(o, (int, float)) and not isinstance(o, bool) and abs(v - o) <= 1:
+                    nd += 1
+                    if nd > maxf:
+                        ok = False
+                        break
+                else:
+                    ok = False
+                    break
+            if ok:
+                return json.loads(res), time.time() - t
+    except Exception:
+        pass
+    return None, None
 
 
 def lead(k):
