@@ -76,8 +76,9 @@
   "paper-lab": {
    "priority": "low"
   },
-  "jev-desk": {
-   "priority": "low"
+  "fomo-lane": {
+   "priority": "high",
+   "ttl_s": 900
   }
  }
 }
