@@ -24,7 +24,7 @@ REGISTRY = [
     ("com.dhruv.jevmajors.main",     P("jev-majors/data/heartbeat.json"),         150, None, True),
     ("com.dhruv.jevmajors.guarded",  P("jev-majors-guarded/data/heartbeat.json"), 150, None, True),
     ("com.dhruv.jevmajors.invert",   P("jev-majors-invert/data/heartbeat.json"),  150, None, True),
-    ("com.dhruv.jevmajors.fomo",     P("jev-majors/data/fomo_view_1.json"),       300, None, True),
+    ("com.dhruv.jevmajors.fomo",     P("jev-majors/data/fomo_alive"),            120, None, True),
     ("com.dhruv.jevmajors.dashboard", None,                                       0,   8789, True),
     ("com.dhruv.jevmarkets.main",    P("jev-markets/data/heartbeat.json"),        150, None, True),
     ("com.dhruv.jevmarkets.guarded", P("jev-markets-guarded/data/heartbeat.json"), 150, None, True),
