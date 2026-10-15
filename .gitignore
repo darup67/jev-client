@@ -5,3 +5,7 @@ cache.db
 cache.db-*
 audit.jsonl
 govern.json
+data/
+supervisor.*.log
+*.log
+*.log.1
