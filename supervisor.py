@@ -22,6 +22,8 @@ P = lambda *a: os.path.join(HOME, *a)
 # label, heartbeat file (mtime), max age s, port (dashboards), keepalive
 REGISTRY = [
     ("com.dhruv.jevmajors.main",     P("jev-majors/data/heartbeat.json"),         150, None, True),
+    ("com.dhruv.jevmajors.guarded",  P("jev-majors-guarded/data/heartbeat.json"), 150, None, True),
+    ("com.dhruv.jevmajors.invert",   P("jev-majors-invert/data/heartbeat.json"),  150, None, True),
     ("com.dhruv.jevmajors.fomo",     P("jev-majors/data/fomo_alive"),            120, None, True),
     ("com.dhruv.jevmajors.dashboard", None,                                       0,   8789, True),
     ("com.dhruv.jevmarkets.main",    P("jev-markets/data/heartbeat.json"),        150, None, True),
@@ -34,9 +36,9 @@ REGISTRY = [
     ("com.dhruv.askjev",             None,                                        0,   8794, True),
 ]
 ERROR_FILES = {"jev-majors": P("jev-majors/data/errors.jsonl"), "jev-markets": P("jev-markets/data/errors.jsonl"), "jev-predict": P("jev-predict/data/errors.jsonl"),
-               "jev-options-iv": P("jev-options-iv/data/errors.jsonl")}
+               "jev-options-iv": P("jev-options-iv/data/errors.jsonl"), "jev-majors-guarded": P("jev-majors-guarded/data/errors.jsonl"), "jev-majors-invert": P("jev-majors-invert/data/errors.jsonl")}
 LOG_GLOBS = [P("jev-*/*.log"), P("jev-client/*.log"), P("market-lab/ops/*.log"), P("zillow-agent/*.log")]
-DBS = [P("jev-majors/data"), P("jev-markets/data"), P("jev-predict/data"), P("jev-options-iv/data"), P("jev-shadow/data"), P("jev-desk/data")]
+DBS = [P("jev-majors/data"), P("jev-majors-guarded/data"), P("jev-majors-invert/data"), P("jev-markets/data"), P("jev-predict/data"), P("jev-options-iv/data"), P("jev-shadow/data"), P("jev-desk/data")]
 BACKUP_ROOT = P("Backups/jev")
 LOG_MAX = 20 * 1024 * 1024
 
