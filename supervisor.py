@@ -33,6 +33,7 @@ REGISTRY = [
     ("com.dhruv.jevoptionsiv.main",  P("jev-options-iv/data/heartbeat.json"),     300, None, True),
     ("com.dhruv.jevoptionsiv.dashboard", None,                                    0,   8792, True),
     ("com.dhruv.jevshadow",          P("jev-shadow/out.log"),                     9000, None, True),
+    ("com.dhruv.jevshop",            None,                                        0,   8796, True),
     ("com.dhruv.askjev",             None,                                        0,   8794, True),
 ]
 ERROR_FILES = {"jev-majors": P("jev-majors/data/errors.jsonl"), "jev-markets": P("jev-markets/data/errors.jsonl"), "jev-predict": P("jev-predict/data/errors.jsonl"),
