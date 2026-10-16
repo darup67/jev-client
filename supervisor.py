@@ -46,7 +46,7 @@ DBS = [P("jev-majors/data"), P("jev-majors-guarded/data"), P("jev-majors-invert/
 BACKUP_ROOT = P("Backups/jev")
 LOG_MAX = 20 * 1024 * 1024
 
-st = {"alerted": {}, "kicks": {}, "misses": {}, "last_rotate": 0, "last_backup": "", "last_disk": 0}
+st = {"alerted": {}, "kicks": {}, "misses": {}, "last_rotate": 0, "last_backup": "", "last_disk": 0, "last_guard": 0, "guard": {}}
 try:
     st.update(json.load(open(STATE)))
 except (OSError, ValueError):
@@ -255,6 +255,13 @@ def check_watchdog():
 def tick(once=False):
     status = {"agents": check_agents(), "errors": check_errors(), "watchdog": check_watchdog()}
     now = time.time()
+    if now - st["last_guard"] >= 60:                                  # stray-process guard (guard.py): kills `yes`-style CPU burners, alerts on runaways, duplicates, orphans and sustained load
+        st["last_guard"] = now
+        try:
+            import guard
+            status["guard"] = [f"{f['kind']}: {f['why']}" for f in guard.scan(act=not DRY, notify=notify, state=st["guard"])]
+        except Exception as e:
+            status["guard"] = [f"guard error {e!r}"]
     if now - st["last_disk"] > 600:
         st["last_disk"] = now
         status["disk_free_gb"] = disk_check()
