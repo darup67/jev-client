@@ -77,10 +77,22 @@ def scan(act=True, notify=None, state=None):
                 break
     # runaway: heavy and old, not allow-listed, not already handled by the kill list
     killed = {r["pid"] for k, r, _ in found}
+    hot = state.setdefault("hot", {})                                  # pid -> first time we saw it above 70%; cleared when it drops below 50%, so a busy burst in an old process is not a runaway
+    now = time.time()
+    live = {str(r["pid"]) for r in rows}
+    for k in [k for k in hot if k not in live]:
+        hot.pop(k)
     for r in rows:
-        if r["pid"] in killed or r["cpu"] < 70 or r["secs"] < 900 or ALLOW.search(r["cmd"].split()[0]) or ALLOW.search(r["cmd"][:200]):
+        if r["pid"] in killed or ALLOW.search(r["cmd"].split()[0]) or ALLOW.search(r["cmd"][:200]):
             continue
-        found.append(("runaway", r, f"{r['cpu']:.0f}% of a core for {r['secs'] // 60} min"))
+        k = str(r["pid"])
+        if r["cpu"] < 50:
+            hot.pop(k, None)
+            continue
+        if r["cpu"] >= 70:
+            hot.setdefault(k, now)
+        if k in hot and now - hot[k] >= 900:
+            found.append(("runaway", r, f"{r['cpu']:.0f}% of a core, above 70% for {int((now - hot[k]) // 60)} min"))
     # orphaned scratch jobs
     for r in rows:
         if r["ppid"] == 1 and r["secs"] > 7200 and r["cpu"] > 10 and re.search(r"(/tmp/|/private/tmp/|scratchpad|nohup)", r["cmd"]) and not ALLOW.search(r["cmd"][:200]):
