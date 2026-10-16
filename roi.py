@@ -100,6 +100,10 @@ def collect():
     pr = _stats("Jev Predict", "Desks", [(t, e - ext) for t, e in _eq_series(os.path.join(d, "data/equity.jsonl"))], bk.get("start_bank"), "excludes non-trading demo credits")
     pr["roi_7d"] = pr["roi_mtd"] = None                                      # window returns would mix pre- and post-sync equity; only since-start ROI is meaningful here
     rows.append(pr)
+    # Jev Agents (prediction-market rule agents, paper)
+    d = os.path.join(HOME, "jev-agents")
+    bk = _jf(os.path.join(d, "data/book.json"), {}) or {}
+    rows.append(_stats("Jev Agents", "Desks", _eq_series(os.path.join(d, "data/equity.jsonl")) or ([(time.time(), 10000.0)] if bk else []), bk.get("start_bank") or 10000.0))
     # FOMO lane (realised P/L only)
     try:
         db = sqlite3.connect(os.path.join(HOME, "jev-majors/data/fomo.db"), timeout=5)
