@@ -89,10 +89,10 @@ def collect():
     # Jev Markets
     d = os.path.join(HOME, "jev-markets")
     rows.append(_stats("Jev Markets", "Desks", _eq_series(os.path.join(d, "data/equity.jsonl")), _kv(os.path.join(d, "data/desk.db"), "paper_start_bank") or 30000.0))
-    # Jev Majors main + A/B lanes
-    for nm, folder in (("Jev Majors", "jev-majors"), ("Majors lane A (baseline)", "jev-majors-guarded"), ("Majors lane B (invert)", "jev-majors-invert")):
+    # Jev Majors main + A/B lanes (Markets invert arm B joins the same group)
+    for nm, folder in (("Jev Majors", "jev-majors"), ("Majors lane A (baseline)", "jev-majors-guarded"), ("Majors lane B (invert)", "jev-majors-invert"), ("Markets lane B (invert)", "jev-markets-invert")):
         d = os.path.join(HOME, folder)
-        rows.append(_stats(nm, "Desks" if nm == "Jev Majors" else "Majors A/B lanes", _eq_series(os.path.join(d, "data/equity.jsonl")), _kv(os.path.join(d, "data/desk.db"), "paper_start_bank")))
+        rows.append(_stats(nm, "Desks" if nm == "Jev Majors" else "A/B lanes", _eq_series(os.path.join(d, "data/equity.jsonl")), _kv(os.path.join(d, "data/desk.db"), "paper_start_bank")))
     # Jev Predict
     d = os.path.join(HOME, "jev-predict")
     bk = _jf(os.path.join(d, "data/book.json"), {}) or {}
@@ -125,7 +125,7 @@ def collect():
         bk = _jf(os.path.join(OPT, "data", bf), {}) or {}
         ser = _eq_series(os.path.join(OPT, "data", ef)) or [(time.time(), bk.get("start_bank") or bank)]      # no marks yet = flat at the starting bank
         rows.append(_stats(nm, "Options IV", ser, bk.get("start_bank") or bank, key=key))
-    order = {"Desks": 0, "Majors A/B lanes": 1, "Options IV": 2}
+    order = {"Desks": 0, "A/B lanes": 1, "Options IV": 2}
     return sorted(rows, key=lambda r: order.get(r["group"], 9))                  # stable: keeps the within-group order
 
 

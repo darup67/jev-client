@@ -1,10 +1,10 @@
 """Pause / flatten / resume flags for the Jev desks (stdlib only). One small file per desk: <desk>/data/control.json.
   {"paused": {"since": epoch, "until": epoch|null, "by": "phone"} | null, "flatten": {"at": epoch, "by": "phone"} | null}
 The desk reads it (cached 3 s) and: pauses = opens NOTHING new (exits and position management carry on); flatten = closes every open paper position once, then stays paused.
-A timed pause lifts itself when `until` passes. Everything is paper trading: nothing here can touch real money. Every change is appended to ~/jev-overview/data/audit.jsonl."""
+A timed pause lifts itself when `until` passes. Everything is paper trading: nothing here can touch real money. Every change is appended to ~/jev-hq/data/audit.jsonl."""
 import json, os, time
 
-AUDIT = os.path.expanduser("~/jev-overview/data/audit.jsonl")
+AUDIT = os.path.expanduser("~/jev-hq/data/audit.jsonl")
 _cache = {}
 
 
