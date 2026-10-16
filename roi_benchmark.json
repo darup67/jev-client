@@ -1,0 +1,1 @@
+{"min": 0.5, "strong": 0.7, "basis": "annualised return on equity", "note": "MINIMUM target for every paper book, not a goal or a cap: ROI is unlimited. 50% = minimum, 70% = strong. Edit here; roi.py, the Overview page and Jev Options IV all read this file."}

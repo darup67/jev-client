@@ -12209,3 +12209,21 @@
 {"t": 1792116143, "name": "majors:PLATINUM:coin#f5d9e4", "n_diff": 10, "diff": ["book.imbalance", "btc_regime.btc_change_24h", "change.15m", "change.24h", "open_interest.change_24h", "phantom.last_flip_15m", "premium_pct", "trend.15m.fast_vs_slow", "trend.15m.label", "trend.15m.price_vs_fast"]}
 {"t": 1792116145, "name": "majors:PALLADIUM:coin#f5d9e4", "n_diff": 7, "diff": ["book.imbalance", "btc_regime.btc_change_24h", "funding.now_per_hour_pct", "open_interest.change_1h", "premium_pct", "trend.15m.fast_vs_slow", "trend.15m.slope_5bars"]}
 {"t": 1792116146, "name": "majors:COPPER:coin#f5d9e4", "n_diff": 3, "diff": ["book.imbalance", "btc_regime.btc_change_24h", "trend.15m.fast_vs_slow"]}
+{"t": 1792116246, "name": "majors:BTC:coin#2c673d", "n_diff": 2, "diff": ["book.imbalance", "trend.15m.label"]}
+{"t": 1792116246, "name": "majors:BCH:coin#f5d9e4", "n_diff": 11, "diff": ["btc_regime.btc_1h_trend", "change.24h", "momentum.rsi_1h", "open_interest.change_1h", "trend.15m.fast_vs_slow", "trend.15m.price_vs_fast", "trend.15m.slope_5bars", "trend.1h.fast_vs_slow", "trend.1h.price_vs_fast", "trend.1h.slope_5bars", "trend.4h.price_vs_fast"]}
+{"t": 1792116246, "name": "majors:DOGE:coin#f5d9e4", "n_diff": 1, "diff": ["trend.15m.label"]}
+{"t": 1792116247, "name": "majors:SOL:coin#f5d9e4", "n_diff": 9, "diff": ["btc_regime.btc_change_24h", "change.1h", "funding.avg_24h_per_hour_pct", "momentum.volume_vs_24h_avg", "phantom.last_flip_15m", "phantom.trend_15m", "trend.15m.fast_vs_slow", "trend.1h.slope_5bars", "trend.4h.price_vs_fast"]}
+{"t": 1792116247, "name": "majors:SUI:coin#f5d9e4", "n_diff": 4, "diff": ["book.imbalance", "change.15m", "open_interest.change_1h", "spread_bps"]}
+{"t": 1792116247, "name": "majors:ZEC:coin#f5d9e4", "n_diff": 3, "diff": ["change.15m", "open_interest.change_1h", "trend.15m.price_vs_fast"]}
+{"t": 1792116247, "name": "majors:GOLD:coin#f5d9e4", "n_diff": 3, "diff": ["momentum.atr_pct_1h", "momentum.volume_vs_24h_avg", "premium_pct"]}
+{"t": 1792116247, "name": "majors:SILVER:coin#f5d9e4", "n_diff": 4, "diff": ["book.imbalance", "momentum.volume_vs_24h_avg", "premium_pct", "trend.1h.fast_vs_slow"]}
+{"t": 1792116248, "name": "majors:PLATINUM:coin#f5d9e4", "n_diff": 9, "diff": ["change.15m", "change.24h", "momentum.atr_pct_1h", "momentum.rsi_1h", "momentum.volume_vs_24h_avg", "premium_pct", "spread_bps", "trend.15m.fast_vs_slow", "trend.1h.slope_5bars"]}
+{"t": 1792116248, "name": "majors:PALLADIUM:coin#f5d9e4", "n_diff": 9, "diff": ["change.15m", "change.1h", "funding.now_per_hour_pct", "momentum.atr_pct_1h", "momentum.volume_vs_24h_avg", "spread_bps", "trend.15m.fast_vs_slow", "trend.15m.label", "trend.1h.price_vs_fast"]}
+{"t": 1792116248, "name": "majors:COPPER:coin#f5d9e4", "n_diff": 5, "diff": ["change.1h", "momentum.atr_pct_1h", "momentum.volume_vs_24h_avg", "premium_pct", "trend.15m.fast_vs_slow"]}
+{"t": 1792116249, "name": "fomo:base:0x3e12b9d6a4d12cd9b4a6d613872d0eb32f68b380#214540", "n_diff": 4, "diff": ["buyer_rate_ratio", "distinct_buyers_1h", "price_change_1h_pct", "price_change_24h_pct"]}
+{"t": 1792116249, "name": "fomo:eth:0x6982508145454ce325ddbe47a25d4ec3d2311933#e275d1", "n_diff": 5, "diff": ["buyer_rate_ratio", "buyers_last_15m", "distinct_buyers_1h", "price_change_1h_pct", "price_change_24h_pct"]}
+{"t": 1792116324, "name": "fomo:base:0x3ec2156d4c0a9cbdab4a016633b7bcf6a8d68ea2#214540", "n_diff": 4, "diff": ["buyer_rate_ratio", "buyers_last_15m", "price_change_1h_pct", "price_change_24h_pct"]}
+{"t": 1792116325, "name": "fomo:base:0xa4a2e2ca3fbfe21aed83471d28b6f65a233c6e00#214540", "n_diff": 2, "diff": ["market_cap_usd", "price_change_1h_pct"]}
+{"t": 1792116325, "name": "fomo:base:0x0cbf291ba052174879d90bf781df1a5f2bc5bb07#214540", "n_diff": 5, "diff": ["buyer_rate_ratio", "buyers_last_15m", "distinct_buyers_1h", "price_change_1h_pct", "price_change_24h_pct"]}
+{"t": 1792116325, "name": "fomo:eth:0x73df7018cbcb919ccde48c3f12f4326688ac4446#e275d1", "n_diff": 5, "diff": ["buyers_last_15m", "distinct_buyers_1h", "market_cap_usd", "price_change_1h_pct", "price_change_24h_pct"]}
+{"t": 1792116325, "name": "fomo:eth:0x07696dcab55e62cfef953666b29fe1970518cb00#e275d1", "n_diff": 3, "diff": ["buyers_last_15m", "distinct_buyers_1h", "price_change_24h_pct"]}

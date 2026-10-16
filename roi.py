@@ -6,6 +6,16 @@ import datetime as dt, json, os, sqlite3, time
 
 HOME = os.path.expanduser("~")
 MIN_DAYS_ANNUAL = 14
+
+
+def bench():
+    b = {"min": 0.5, "strong": 0.7}
+    try:
+        b.update(json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "roi_benchmark.json"))))
+    except (OSError, ValueError):
+        pass
+    return b
+
 OPT = os.path.join(HOME, "jev-options-iv")
 
 
@@ -58,7 +68,15 @@ def _stats(name, group, series, start, note="", key=None):
         mdd = min(mdd, e / peak - 1) if peak else mdd
     roi = eq / start - 1
     ann = ((eq / start) ** (365.0 / days) - 1) if days >= MIN_DAYS_ANNUAL and eq > 0 else None
-    return {"name": name, "group": group, "key": key, "start": round(start, 2), "equity": round(eq, 2), "pnl": round(eq - start, 2), "roi": roi, "roi_7d": ret_since(now - 7 * 86400) if days >= 1 else None, "roi_mtd": ret_since(mo),
+    bm = bench()
+    pace = (1 + bm["min"]) ** (days / 365.0) - 1 if days > 0 else 0.0           # ROI the book should have by now to be on a minimum-target pace
+    if ann is not None:
+        status = "strong" if ann >= bm["strong"] else "meets minimum" if ann >= bm["min"] else "below minimum"
+    elif days >= 3:
+        status = "on pace" if roi >= pace else "behind pace"
+    else:
+        status = "too early"
+    return {"status": status, "pace_min": pace, "name": name, "group": group, "key": key, "start": round(start, 2), "equity": round(eq, 2), "pnl": round(eq - start, 2), "roi": roi, "roi_7d": ret_since(now - 7 * 86400) if days >= 1 else None, "roi_mtd": ret_since(mo),
             "annualised": ann, "max_dd": mdd, "days": round(days, 1), "note": note}
 
 
