@@ -107,7 +107,8 @@ def collect():
         bk = _jf(os.path.join(OPT, "data", bf), {}) or {}
         ser = _eq_series(os.path.join(OPT, "data", ef)) or [(time.time(), bk.get("start_bank") or bank)]      # no marks yet = flat at the starting bank
         rows.append(_stats(nm, "Options IV", ser, bk.get("start_bank") or bank, key=key))
-    return rows
+    order = {"Desks": 0, "Majors A/B lanes": 1, "Options IV": 2}
+    return sorted(rows, key=lambda r: order.get(r["group"], 9))                  # stable: keeps the within-group order
 
 
 def write():
