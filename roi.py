@@ -93,6 +93,10 @@ def collect():
     for nm, folder in (("Jev Majors", "jev-majors"), ("Majors lane A (baseline)", "jev-majors-guarded"), ("Majors lane B (invert)", "jev-majors-invert"), ("Markets lane B (invert)", "jev-markets-invert")):
         d = os.path.join(HOME, folder)
         rows.append(_stats(nm, "Desks" if nm == "Jev Majors" else "A/B lanes", _eq_series(os.path.join(d, "data/equity.jsonl")), _kv(os.path.join(d, "data/desk.db"), "paper_start_bank")))
+    # Jev Markets swing lane (daily dip-buy long + small downtrend shorts, MNQ/MES/MYM/MGC): A/B lane against the intraday scalper
+    d = os.path.join(HOME, "jev-markets")
+    sb = _jf(os.path.join(d, "data/swing_book.json"), {}) or {}
+    rows.append(_stats("Markets swing lane", "A/B lanes", _eq_series(os.path.join(d, "data/swing_equity.jsonl")), sb.get("start_bank") or 100000.0))
     # Jev Predict
     d = os.path.join(HOME, "jev-predict")
     bk = _jf(os.path.join(d, "data/book.json"), {}) or {}
