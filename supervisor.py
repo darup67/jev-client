@@ -33,6 +33,7 @@ REGISTRY = [
     ("com.dhruv.jevagents.main",     P("jev-agents/data/heartbeat.json"),         240, None, True),
     ("com.dhruv.jevagents.dashboard", None,                                       0,   8798, True),
     ("com.dhruv.jevcareer.dashboard", None,                                        0,   8799, True),
+    ("com.dhruv.jevhome.dashboard",   None,                                        0,   8800, True),
     ("com.dhruv.jevpredict.main",    P("jev-predict/data/heartbeat.json"),        150, None, True),
     ("com.dhruv.jevpredict.dashboard", None,                                      0,   8795, True),
     ("com.dhruv.jevoptionsiv.main",  P("jev-options-iv/data/heartbeat.json"),     300, None, True),
