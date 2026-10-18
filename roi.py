@@ -113,7 +113,7 @@ def collect():
         db = sqlite3.connect(os.path.join(HOME, "jev-majors/data/fomo.db"), timeout=5)
         tr = db.execute("SELECT t_out, pnl FROM lane WHERE t_out IS NOT NULL ORDER BY t_out").fetchall()
         first = db.execute("SELECT MIN(t_in) FROM lane").fetchone()[0]
-        eq, ser = 1000.0, [(first or time.time(), 1000.0)] if first else []
+        eq, ser = 1000.0, [(first or time.time(), 1000.0)] if first else [(time.time(), 1000.0)]   # fresh bank (no trades yet) shows $1,000 at 0%
         for t, p in tr:
             eq += p or 0
             ser.append((t, eq))
