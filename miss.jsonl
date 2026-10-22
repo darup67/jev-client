@@ -57977,3 +57977,4 @@
 {"t": 1792696109, "name": "markets:ES:scalp#eae96f", "n_diff": 6, "diff": ["lv_react", "lvl_onl_atr", "move_5m_atr", "phantom_1h_line_atr", "sess_range_pos", "vp_vah_atr"]}
 {"t": 1792696120, "name": "markets:ES:scalp#eae96f", "n_diff": 4, "diff": ["lvl_onl_atr", "move_5m_atr", "sess_range_pos", "vp_vah_atr"]}
 {"t": 1792696132, "name": "markets:ES:scalp#eae96f", "n_diff": 3, "diff": ["gex_monthly_key_atr", "lvl_pdl_atr", "market.indices.SPY.vs_50d_avg"]}
+{"t": 1792696238, "name": "markets:ES:scalp#eae96f", "n_diff": 7, "diff": ["lvl_pdc_atr", "move_30m_atr", "phantom_1h_line_atr", "rsi_1m", "sess_range_pos", "sess_vwap_atr", "vp_prev_val_atr"]}
