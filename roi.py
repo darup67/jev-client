@@ -99,7 +99,8 @@ def collect():
     d = os.path.join(HOME, "jev-markets")
     rows.append(_stats("Jev Markets", "Desks", _eq_series(os.path.join(d, "data/equity.jsonl")), _kv(os.path.join(d, "data/desk.db"), "paper_start_bank") or 30000.0))
     # Jev Perps (renamed from Jev Majors 2026-10-22; folders keep their jev-majors* names) + A/B lanes (Markets invert arm B joins the same group)
-    for nm, folder in (("Jev Perps", "jev-majors"), ("Perps lane A (baseline)", "jev-majors-guarded"), ("Perps lane B (invert)", "jev-majors-invert"), ("Markets lane B (invert)", "jev-markets-invert")):
+    # 2026-10-22: Perps lane B (invert, ~/jev-majors-invert) IS Jev Perps; the old Jev-following book in ~/jev-majors is a hidden signal engine (no row)
+    for nm, folder in (("Jev Perps", "jev-majors-invert"), ("Perps lane A (baseline)", "jev-majors-guarded"), ("Markets lane B (invert)", "jev-markets-invert")):
         d = os.path.join(HOME, folder)
         rows.append(_stats(nm, "Desks" if nm == "Jev Perps" else "A/B lanes", _eq_series(os.path.join(d, "data/equity.jsonl")), _kv(os.path.join(d, "data/desk.db"), "paper_start_bank")))
     # Jev Markets swing lane (daily dip-buy long + small downtrend shorts, MNQ/MES/MYM/MGC): A/B lane against the intraday scalper
