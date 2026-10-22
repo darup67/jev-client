@@ -80,5 +80,10 @@
    "priority": "high",
    "ttl_s": 900
   }
- }
+ },
+ "blocked_callers": [
+  "jev-majors",
+  "jev-predict"
+ ],
+ "blocked_callers_note": "2026-10-22 user: Jev Perps (hidden engine caller jev-majors) and Jev Predict paused; no Jev API calls. Remove an entry to re-enable."
 }

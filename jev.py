@@ -112,7 +112,24 @@ def _coarse(o):
     return o
 
 
+_BLK = {"m": None, "v": ()}
+
+
+def blocked(caller):
+    """policy.json "blocked_callers": callers that must make NO Jev API calls (user 2026-10-22: Jev Predict + Jev Perps paused). Prefix match; re-read on change."""
+    p = os.path.join(os.path.dirname(os.path.abspath(__file__)), "policy.json")
+    try:
+        m = os.path.getmtime(p)
+        if m != _BLK["m"]:
+            _BLK.update(m=m, v=tuple(json.load(open(p)).get("blocked_callers") or ()))
+    except Exception:
+        pass
+    return any(str(caller).startswith(b) for b in _BLK["v"])
+
+
 def ask(state, questions, caller="?", model=MODEL, timeout=10, tries=3, reuse=None):
+    if blocked(caller):
+        return None                                      # hard safeguard: no request leaves this machine for a blocked caller
     """Token-optimized front door (jevopt.py, policy.json): shared quantized answer cache, audited reuse, single-flight, spend governor. Anything that goes wrong in the optimizer falls back to _ask_raw."""
     if reuse:
         try:
@@ -175,6 +192,8 @@ def _ask_raw(state, questions, caller="?", model=MODEL, timeout=10, tries=3, reu
     reuse=(name, ttl_seconds): within ttl, the SAME question set on a state that matches to 2 significant figures returns the earlier answer
     (marked "_cached": True, logged with zero tokens) instead of paying again. Nothing is reused across different questions or a changed state."""
     global _warned
+    if blocked(caller):
+        return None                                      # hard safeguard (also covers direct _ask_raw callers)
     ck = None
     if reuse:
         ck = reuse[0] + ":" + hashlib.md5(json.dumps([_coarse(state), questions], default=str, sort_keys=True).encode()).hexdigest()
