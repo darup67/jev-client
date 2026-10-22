@@ -102,7 +102,12 @@ def collect():
     # 2026-10-22: Perps lane B (invert, ~/jev-majors-invert) IS Jev Perps; the old Jev-following book in ~/jev-majors is a hidden signal engine (no row)
     for nm, folder in (("Jev Perps", "jev-majors-invert"), ("Perps lane A (baseline)", "jev-majors-guarded"), ("Markets lane B (invert)", "jev-markets-invert")):
         d = os.path.join(HOME, folder)
-        rows.append(_stats(nm, "Desks" if nm == "Jev Perps" else "A/B lanes", _eq_series(os.path.join(d, "data/equity.jsonl")), _kv(os.path.join(d, "data/desk.db"), "paper_start_bank")))
+        ser = _eq_series(os.path.join(d, "data/equity.jsonl"))
+        carry, carry_t = _kv(os.path.join(d, "data/desk.db"), "paper_carry"), _kv(os.path.join(d, "data/desk.db"), "paper_carry_t")
+        if carry and carry_t:                                   # a bank sync (e.g. to the Kalshi demo balance) is not trading P&L: back it out of points written after it
+            ser = [(t, e - carry if t >= carry_t else e) for t, e in ser]
+        rows.append(_stats(nm, "Desks" if nm == "Jev Perps" else "A/B lanes", ser, _kv(os.path.join(d, "data/desk.db"), "paper_start_bank"),
+                           f"bank synced to Kalshi demo equity (carry {carry:+,.2f} excluded from ROI)" if carry else ""))
     # Jev Markets swing lane (daily dip-buy long + small downtrend shorts, MNQ/MES/MYM/MGC): A/B lane against the intraday scalper
     d = os.path.join(HOME, "jev-markets")
     sb = _jf(os.path.join(d, "data/swing_book.json"), {}) or {}
