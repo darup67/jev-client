@@ -24,6 +24,7 @@ REGISTRY = [
     ("com.dhruv.jevmajors.main",     P("jev-majors/data/heartbeat.json"),         150, None, True),
     ("com.dhruv.jevmajors.invert",   P("jev-majors-invert/data/heartbeat.json"),  150, None, True),
     ("com.dhruv.jevcoindesk.main",   P("jev-coin-desk/data/fomo_alive"),         120, None, True),     # FOMO lane, split out of Jev Majors 2026-10-22
+    ("com.dhruv.jevcoindesk.chains", P("jev-coin-desk/data/chains_alive.json"),  120, None, True),     # multi-chain early-pool recorder (record only) 2026-10-22
     ("com.dhruv.jevcoindesk.dashboard", None,                                     0,   8801, True),
     ("com.dhruv.jevmajors.dashboard", None,                                       0,   8789, True),
     ("com.dhruv.jevmarkets.main",    P("jev-markets/data/heartbeat.json"),        150, None, True),
