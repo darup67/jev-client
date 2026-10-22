@@ -77,7 +77,16 @@ def _stats(name, group, series, start, note="", key=None):
     else:
         status = "too early"
     return {"status": status, "pace_min": pace, "name": name, "group": group, "key": key, "start": round(start, 2), "equity": round(eq, 2), "pnl": round(eq - start, 2), "roi": roi, "roi_7d": ret_since(now - 7 * 86400) if days >= 1 else None, "roi_mtd": ret_since(mo),
-            "annualised": ann, "max_dd": mdd, "days": round(days, 1), "note": note}
+            "annualised": ann, "max_dd": mdd, "days": round(days, 1), "note": note, "spark": _spark(series, start)}
+
+
+def _spark(series, start, n=40):
+    """Up to n evenly spaced ROI points (equity / start - 1) for the HQ sparkline; the last point is always the latest equity."""
+    if not series or not start:
+        return []
+    step = max(1, len(series) // n)
+    pts = series[::step][-(n - 1):] + [series[-1]]
+    return [round(e / start - 1, 4) for _, e in pts]
 
 
 def _eq_series(path, key="eq"):
