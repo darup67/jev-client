@@ -98,10 +98,10 @@ def collect():
     # Jev Markets
     d = os.path.join(HOME, "jev-markets")
     rows.append(_stats("Jev Markets", "Desks", _eq_series(os.path.join(d, "data/equity.jsonl")), _kv(os.path.join(d, "data/desk.db"), "paper_start_bank") or 30000.0))
-    # Jev Majors main + A/B lanes (Markets invert arm B joins the same group)
-    for nm, folder in (("Jev Majors", "jev-majors"), ("Majors lane A (baseline)", "jev-majors-guarded"), ("Majors lane B (invert)", "jev-majors-invert"), ("Markets lane B (invert)", "jev-markets-invert")):
+    # Jev Perps (renamed from Jev Majors 2026-10-22; folders keep their jev-majors* names) + A/B lanes (Markets invert arm B joins the same group)
+    for nm, folder in (("Jev Perps", "jev-majors"), ("Perps lane A (baseline)", "jev-majors-guarded"), ("Perps lane B (invert)", "jev-majors-invert"), ("Markets lane B (invert)", "jev-markets-invert")):
         d = os.path.join(HOME, folder)
-        rows.append(_stats(nm, "Desks" if nm == "Jev Majors" else "A/B lanes", _eq_series(os.path.join(d, "data/equity.jsonl")), _kv(os.path.join(d, "data/desk.db"), "paper_start_bank")))
+        rows.append(_stats(nm, "Desks" if nm == "Jev Perps" else "A/B lanes", _eq_series(os.path.join(d, "data/equity.jsonl")), _kv(os.path.join(d, "data/desk.db"), "paper_start_bank")))
     # Jev Markets swing lane (daily dip-buy long + small downtrend shorts, MNQ/MES/MYM/MGC): A/B lane against the intraday scalper
     d = os.path.join(HOME, "jev-markets")
     sb = _jf(os.path.join(d, "data/swing_book.json"), {}) or {}
@@ -117,9 +117,9 @@ def collect():
     d = os.path.join(HOME, "jev-agents")
     bk = _jf(os.path.join(d, "data/book.json"), {}) or {}
     rows.append(_stats("Jev Agents", "Desks", _eq_series(os.path.join(d, "data/equity.jsonl")) or ([(time.time(), 10000.0)] if bk else []), bk.get("start_bank") or 10000.0))
-    # FOMO lane (realised P/L only)
+    # Jev Coin Desk = the FOMO lane, its own agent since 2026-10-22 (realised P/L only)
     try:
-        db = sqlite3.connect(os.path.join(HOME, "jev-majors/data/fomo.db"), timeout=5)
+        db = sqlite3.connect(f"file:{os.path.join(HOME, 'jev-coin-desk/data/fomo.db')}?mode=ro", uri=True, timeout=5)
         tr = db.execute("SELECT t_out, pnl FROM lane WHERE t_out IS NOT NULL ORDER BY t_out").fetchall()
         first = db.execute("SELECT MIN(t_in) FROM lane").fetchone()[0]
         eq, ser = 1000.0, [(first or time.time(), 1000.0)] if first else [(time.time(), 1000.0)]   # fresh bank (no trades yet) shows $1,000 at 0%
@@ -128,9 +128,9 @@ def collect():
             ser.append((t, eq))
         if ser and ser[-1][0] < time.time() - 60:
             ser.append((time.time(), eq))
-        rows.append(_stats("FOMO lane", "Desks", ser, 1000.0, "realised P/L only (open trades not marked)"))
+        rows.append(_stats("Jev Coin Desk", "Desks", ser, 1000.0, "FOMO memecoin lane · realised P/L only (open trades not marked)"))
     except Exception:
-        rows.append({"name": "FOMO lane", "group": "Desks", "equity": None, "roi": None, "note": "no data yet"})
+        rows.append({"name": "Jev Coin Desk", "group": "Desks", "equity": None, "roi": None, "note": "no data yet"})
     # Jev Options IV lanes
     cfg = _jf(os.path.join(OPT, "config.json"), {}) or {}
     lanes = [("condor", "Condor", "condor_equity.jsonl", "condor_book.json", (cfg.get("condor") or {}).get("bank_usd", 10000)),
