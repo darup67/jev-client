@@ -26,6 +26,7 @@ REGISTRY = [
     ("com.dhruv.jevcoindesk.main",   P("jev-coin-desk/data/fomo_alive"),         120, None, True),     # FOMO lane, split out of Jev Majors 2026-10-22
     ("com.dhruv.jevcoindesk.chains", P("jev-coin-desk/data/chains_alive.json"),  120, None, True),     # multi-chain early-pool recorder, EVM chains (record only) 2026-10-22
     ("com.dhruv.jevcoindesk.chainssol", P("jev-coin-desk/data/chains_alive_sol.json"), 120, None, True),  # same, Solana pump.fun feed in its own process
+    ("com.dhruv.jevcoindesk.health", P("jev-coin-desk/data/health.json"),      180, None, True),     # Coin Desk health monitor (health.py loop) 2026-10-22
     ("com.dhruv.jevcoindesk.dashboard", None,                                     0,   8801, True),
     ("com.dhruv.jevmajors.dashboard", None,                                       0,   8789, True),
     ("com.dhruv.jevmarkets.main",    P("jev-markets/data/heartbeat.json"),        150, None, True),
