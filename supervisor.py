@@ -54,7 +54,7 @@ DBS = [P("jev-coin-desk/data"), P("jev-majors/data"), P("jev-majors-invert/data"
 BACKUP_ROOT = P("Backups/jev")
 LOG_MAX = 20 * 1024 * 1024
 
-st = {"alerted": {}, "kicks": {}, "misses": {}, "last_rotate": 0, "last_backup": "", "last_disk": 0, "last_guard": 0, "guard": {}}
+st = {"alerted": {}, "kicks": {}, "misses": {}, "last_rotate": 0, "last_backup": "", "last_disk": 0, "last_guard": 0, "guard": {}, "last_fd": 0, "fd": {}, "last_lint": 0, "last_smoke": ""}
 try:
     st.update(json.load(open(STATE)))
 except (OSError, ValueError):
@@ -270,6 +270,33 @@ def tick(once=False):
             status["guard"] = [f"{f['kind']}: {f['why']}" for f in guard.scan(act=not DRY, notify=notify, state=st["guard"])]
         except Exception as e:
             status["guard"] = [f"guard error {e!r}"]
+    if now - st.get("last_fd", 0) >= 60:                              # file-descriptor guard (fdguard.py): alerts at 60 %, restarts a job at 85 % of its open-file limit, flags leak trends (2026-10-23)
+        st["last_fd"] = now
+        try:
+            import fdguard
+            status["fds"] = fdguard.scan(REGISTRY, job, kick, notify, act=not DRY, state=st.setdefault("fd", {}))
+        except Exception as e:
+            status["fds"] = {"error": repr(e)[:80]}
+    if now - st.get("last_lint", 0) > 3600:                           # fdlint: NEW unclosed-connection suspects in any Jev repo (baseline data/fdlint_baseline.json)
+        st["last_lint"] = now
+        try:
+            r = subprocess.run([sys.executable, os.path.join(HERE, "fdlint.py"), "--new"], capture_output=True, text=True, timeout=120)
+            if r.returncode == 1:
+                notify("fdlint-new", "New unclosed database connection in Jev code", "fdlint found code that opens a connection and never closes it (the 2026-10-23 dashboard leak pattern):\n" + "\n".join(r.stdout.splitlines()[:12]) + "\nFix it (close in finally / use fdsafe.connect) or accept with `python3 ~/jev-client/fdlint.py --baseline`.", 24)
+            status["fdlint"] = r.stdout.strip().splitlines()[-1] if r.stdout.strip() else "ok"
+        except Exception as e:
+            status["fdlint"] = f"error {e!r}"[:60]
+    lt0 = time.localtime()
+    if lt0.tm_hour == 3 and lt0.tm_min >= 10 and st.get("last_smoke") != time.strftime("%Y-%m-%d") and not DRY:      # nightly leak smoke test of every dashboard
+        st["last_smoke"] = time.strftime("%Y-%m-%d")
+        try:
+            r = subprocess.run([sys.executable, os.path.join(HERE, "fdsmoke.py")], capture_output=True, text=True, timeout=900)
+            leaks = [l for l in r.stdout.splitlines() if "LEAKS" in l]
+            status["fdsmoke"] = "leaks: " + "; ".join(leaks) if leaks else "no leaks"
+            if leaks:
+                notify("fdsmoke-leak", "A Jev dashboard endpoint leaks file descriptors", "Nightly fdsmoke found:\n" + "\n".join(leaks) + "\nA page that leaks eventually stops answering (OSError 24). Fix the endpoint's handler.", 24)
+        except Exception as e:
+            status["fdsmoke"] = f"error {e!r}"[:60]
     if now - st["last_disk"] > 600:
         st["last_disk"] = now
         status["disk_free_gb"] = disk_check()
