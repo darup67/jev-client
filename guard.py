@@ -13,6 +13,9 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 LOG = os.path.join(HERE, "data", "stray_guard.jsonl")
 UID = os.getuid()
 NCPU = os.cpu_count() or 8
+# scheduled batch jobs that legitimately run hot for a long time: (pattern, seconds above 70 % before it counts as a runaway)
+BATCH = [(re.compile(r"lab/run\.py"), 2700)]
+
 ALLOW = re.compile(r"(Claude|claude|Google Chrome|Chrome Helper|WindowServer|kernel_task|Safari|WebKit|Xcode|Simulator|Terminal|iTerm|Slack|Zoom|Spotlight|mds|corespotlightd|Dock|Finder|backupd|"
                    r"TradingView|Cursor|Code Helper|Electron|ollama|tailscale|Tailscale|Chargeberry|Siri|Mail|Notes|Preview|Keynote|Numbers|Pages|Photos|Music|Podcasts)")
 KILL = [(re.compile(r"^(/usr/bin/)?yes(\s|$)"), "yes: prints forever, no legitimate use as a background job", 30),
@@ -91,8 +94,9 @@ def scan(act=True, notify=None, state=None):
             continue
         if r["cpu"] >= 70:
             hot.setdefault(k, now)
-        if k in hot and now - hot[k] >= 900:
-            found.append(("runaway", r, f"{r['cpu']:.0f}% of a core, above 70% for {int((now - hot[k]) // 60)} min"))
+        lim_ = next((s_ for rx_, s_ in BATCH if rx_.search(r["cmd"])), 900)
+        if k in hot and now - hot[k] >= lim_:
+            found.append(("runaway", r, f"{r['cpu']:.0f}% of a core, above 70% for {int((now - hot[k]) // 60)} min" + (" (batch job over its own limit)" if lim_ != 900 else "")))
     # orphaned scratch jobs
     for r in rows:
         if r["ppid"] == 1 and r["secs"] > 7200 and r["cpu"] > 10 and re.search(r"(/tmp/|/private/tmp/|scratchpad|nohup)", r["cmd"]) and not ALLOW.search(r["cmd"][:200]):
