@@ -1,0 +1,89 @@
+/* Jev UI v1, generic layer for every Jev dashboard (2026-10-27). A THEME ONLY: it remaps every colour variable the dashboards already use and restyles common components
+   (cards, chips, tabs, tables, buttons, inputs). It never renames, hides or removes anything a dashboard's own script depends on.
+   Rules: elayadesign/ai-design-skills (landing-page-design B): Geist + Geist Mono, flat dark surfaces from the approved palette, no background gradients,
+   spacing / radius scales, one easing curve, transform + opacity motion, visible focus. Mood: scrolltide.co (near black, aqua accent, pill controls, mono labels).
+   Escape hatch: add ?classic=1 to any dashboard URL for the old look (?ui=new returns). */
+
+:root, :root:root {
+  --bg: #000000; --bg2: #131209; --side: #131209; --hd: #131209;
+  --sf: #181818; --sf2: #1F1F1F; --sf3: #272727; --card: #181818; --card2: #1F1F1F; --pn: #181818;
+  --line: #313131; --bd: #313131;
+  --ink: #F3F5F8; --wh: #F3F5F8; --ink2: #C4C9D1; --mut: #8A909A; --mu: #8A909A;
+  --acc: #8BF3E6; --acc2: #6FD3C7; --accbg: rgba(139, 243, 230, .12); --accsoft: rgba(139, 243, 230, .12); --teal: #8BF3E6; --cy: #8BF3E6; --vio: #8BF3E6; --sky: #8BB8FF; --bl: #8BB8FF; --new: #8BF3E6;
+  --up: #4ADE80; --upbg: rgba(74, 222, 128, .12); --ok: #4ADE80; --okbg: rgba(74, 222, 128, .12); --em: #4ADE80;
+  --dn: #FF6B6B; --dnbg: rgba(255, 107, 107, .12); --bad: #FF6B6B; --badbg: rgba(255, 107, 107, .12); --pink: #F2B84B;
+  --amb: #F2B84B; --am: #F2B84B; --am2: #F2B84B; --warn: #F2B84B; --warnbg: rgba(242, 184, 75, .12);
+  --glow: transparent; --r: 16px;
+  --font: "Geist", ui-sans-serif, system-ui, sans-serif; --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace; --num: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (prefers-color-scheme: light) { :root, :root:root { --bg: #000000; --card: #181818; --card2: #1F1F1F; --sf: #181818; --sf2: #1F1F1F; --pn: #181818; --line: #313131; --bd: #313131; --ink: #F3F5F8; --ink2: #C4C9D1; --mut: #8A909A; --mu: #8A909A; --acc: #8BF3E6; --up: #4ADE80; --dn: #FF6B6B; --amb: #F2B84B; --warn: #F2B84B; } }
+
+html, body { background: var(--bg) !important; background-image: none !important; color: var(--ink); font-family: var(--font); -webkit-font-smoothing: antialiased; }
+body::before, body::after { display: none !important; }
+body *, body *::before, body *::after { text-shadow: none !important; font-style: normal !important; }
+body *:not(button):not(input):not(select):not(textarea):not(.jx-keep) { box-shadow: none !important; }
+h1, h2, h3, h4 { font-family: var(--font); letter-spacing: -0.01em; font-weight: 600; text-transform: none; text-wrap: balance; color: var(--ink); text-shadow: none; }
+p, .sub, .mut { text-wrap: pretty; }
+.num, .mono, code, td.n, .n { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+a { transition: opacity 300ms var(--ease); } a:hover { opacity: .85; }
+:focus-visible { outline: 2px solid var(--acc) !important; outline-offset: 2px !important; }
+::selection { background: var(--acc); color: #000; }
+::-webkit-scrollbar { width: 8px; height: 8px; } ::-webkit-scrollbar-thumb { background: var(--sf3); border-radius: 99px; } ::-webkit-scrollbar-track { background: transparent; }
+
+/* header / masthead: flat translucent glass, hairline underneath */
+header { background: rgba(0, 0, 0, .78) !important; background-image: none !important; -webkit-backdrop-filter: blur(16px) !important; backdrop-filter: blur(16px) !important; border-bottom: 1px solid var(--line) !important; border-top: 0 !important; }
+nav { background-image: none; }
+.logo { background: var(--sf2) !important; background-image: none !important; border: 1px solid var(--line); border-radius: 8px !important; color: var(--ink) !important; animation: none !important; }
+h1 { font-weight: 700; letter-spacing: -0.03em; }
+
+/* surfaces */
+.card, .panel, .box, .tile, .stat, .tl, .at, .note, .addbox, .job, .cand, .gsec { background: var(--card); background-image: none !important; border: 1px solid var(--line); border-radius: 16px; transform: none; transition: border-color 300ms var(--ease); }
+.card:hover { border-color: #454545; }
+.card .card, .card .tile, .card .stat, .card .box, .panel .box { background: var(--card2); border-radius: 8px; }
+details { border-radius: 12px; }
+
+/* chips, tags, pills, badges */
+.pill, .chip, .tag, .badge, .cpill, .rq { display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--line); background: var(--card2); background-image: none; color: var(--ink2); border-radius: 999px; padding: 0 12px; font-family: var(--mono); font-size: 12px; line-height: 24px; letter-spacing: .02em; text-transform: none; animation: none; }
+
+/* tabs and segmented controls */
+.tabs, .seg { display: inline-flex; gap: 4px; padding: 4px; background: var(--card); border: 1px solid var(--line); border-radius: 999px; }
+.tabs button, .seg button, .tabs a, .seg a { border: 0; background: transparent; color: var(--ink2); border-radius: 999px; padding: 8px 16px; font: 600 14px/20px var(--font); text-transform: none; letter-spacing: 0; cursor: pointer; transition: background-color 300ms var(--ease), color 300ms var(--ease), transform 500ms var(--ease); }
+.tabs button:hover, .seg button:hover { background: var(--sf3); color: var(--ink); }
+.tabs button.on, .tabs button.act, .tabs button.active, .tabs button[aria-selected="true"], .seg button.on, .seg button.act, .seg button.active, .seg button[aria-selected="true"] { background: var(--ink); color: #000; }
+.tabs button:active, .seg button:active { transform: scale(.98); }
+
+/* controls */
+button, select, input, textarea { font-family: var(--font); transition: background-color 300ms var(--ease), border-color 300ms var(--ease), transform 500ms var(--ease); }
+button { background: var(--card2); color: var(--ink); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; font-weight: 600; font-size: 14px; text-transform: none; letter-spacing: 0; cursor: pointer; }
+button:hover { background: var(--sf3); } button:active { transform: scale(.98); } button:disabled { opacity: .5; cursor: not-allowed; }
+input, select, textarea { background: var(--card2); color: var(--ink); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; font-size: 14px; }
+input::placeholder, textarea::placeholder { color: var(--mut); }
+summary { cursor: pointer; } summary:hover { color: var(--ink); }
+
+/* tables */
+table { border-collapse: collapse; }
+th { font-family: var(--mono); font-size: 12px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--mut); background: transparent; border-bottom: 1px solid var(--line); }
+td { border-bottom: 1px solid var(--sf3); }
+tr:last-child td { border-bottom: 0; } tbody tr:hover td { background: var(--card2); transition: background-color 300ms var(--ease); }
+
+/* bars and meters: flat, rounded */
+.bar, .meter, .track, .mbar, .barp, .pb { border-radius: 99px; background-color: var(--sf3); }
+
+/* states */
+.empty { color: var(--mut); border: 1px dashed var(--line); border-radius: 12px; padding: 24px; text-align: center; }
+.err, .error { color: var(--dn); }
+
+/* dashboard switcher (top right, never covers the page's own header controls on desktop) */
+.jx-sw { position: fixed; z-index: 90; left: 16px; bottom: 16px; font: 600 14px/20px var(--font); }
+.jx-sw > button { display: inline-flex; align-items: center; gap: 8px; background: rgba(24, 24, 24, .8); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid var(--line); border-radius: 999px; padding: 8px 16px; color: var(--ink); }
+.jx-sw > button:hover { background: var(--sf3); }
+.jx-sw .d { width: 8px; height: 8px; border-radius: 99px; background: var(--up); }
+.jx-sw ul { position: absolute; left: 0; bottom: 48px; margin: 0; padding: 8px; list-style: none; min-width: 220px; max-height: 70vh; overflow: auto; background: rgba(24, 24, 24, .92); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid var(--line); border-radius: 16px; opacity: 0; transform: translateY(8px); pointer-events: none; transition: opacity 300ms var(--ease), transform 500ms var(--ease); }
+.jx-sw.open ul { opacity: 1; transform: none; pointer-events: auto; }
+.jx-sw li a { display: flex; justify-content: space-between; gap: 16px; padding: 8px 12px; border-radius: 8px; color: var(--ink2); text-decoration: none; }
+.jx-sw li a:hover { background: var(--sf3); color: var(--ink); opacity: 1; }
+.jx-sw li a[aria-current="page"] { background: var(--ink); color: #000; }
+.jx-sw li a span { font: 500 12px/20px var(--mono); opacity: .6; }
+.jx-skip { position: fixed; left: 12px; top: -64px; z-index: 100; background: var(--ink); color: #000; padding: 8px 12px; border-radius: 8px; font-weight: 600; transition: transform 500ms var(--ease); } .jx-skip:focus { transform: translateY(76px); }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: opacity 200ms linear !important; } }
