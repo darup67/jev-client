@@ -54,7 +54,7 @@ DBS = [P("jev-coin-desk/data"), P("jev-majors/data"), P("jev-majors-invert/data"
 BACKUP_ROOT = P("Backups/jev")
 LOG_MAX = 20 * 1024 * 1024
 
-st = {"alerted": {}, "kicks": {}, "misses": {}, "last_rotate": 0, "last_backup": "", "last_disk": 0, "last_guard": 0, "guard": {}, "last_fd": 0, "fd": {}, "last_lint": 0, "last_smoke": ""}
+st = {"alerted": {}, "kicks": {}, "misses": {}, "last_rotate": 0, "last_backup": "", "last_disk": 0, "last_guard": 0, "guard": {}, "last_fd": 0, "fd": {}, "last_lint": 0, "last_smoke": "", "last_errmon": 0}
 try:
     st.update(json.load(open(STATE)))
 except (OSError, ValueError):
@@ -277,6 +277,13 @@ def tick(once=False):
             status["fds"] = fdguard.scan(REGISTRY, job, kick, notify, act=not DRY, state=st.setdefault("fd", {}))
         except Exception as e:
             status["fds"] = {"error": repr(e)[:80]}
+    if now - st.get("last_errmon", 0) >= 60:                          # error-log monitor (errmon.py): new tracebacks, rapid fixes, email report (2026-10-29)
+        st["last_errmon"] = now
+        try:
+            import errmon
+            status["errmon"] = errmon.scan(st, kick=kick, job=job, notify=notify, labels={r[0] for r in REGISTRY}, act=not DRY)
+        except Exception as e:
+            status["errmon"] = {"error": repr(e)[:80]}
     if now - st.get("last_lint", 0) > 3600:                           # fdlint: NEW unclosed-connection suspects in any Jev repo (baseline data/fdlint_baseline.json)
         st["last_lint"] = now
         try:
