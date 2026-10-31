@@ -16,7 +16,7 @@ HOME = os.path.expanduser("~")
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "data", "errmon.json")
 GLOBS = [os.path.join(HOME, "jev-*", "*.err.log"), os.path.join(HOME, "jev-client", "*.err.log"), os.path.join(HOME, "market-lab", "ops", "*.err.log"), os.path.join(HOME, "zillow-agent", "*.err.log")]
-PREFIX = {"jev-coin-desk": "jevcoindesk", "jev-markets": "jevmarkets", "jev-markets-invert": "jevmarketsinvert", "jev-majors": "jevmajors", "jev-predict": "jevpredict", "jev-options-iv": "jevoptionsiv",
+PREFIX = {"jev-coin-desk": "jevcoindesk", "jev-markets": "jevmarkets", "jev-majors": "jevmajors", "jev-predict": "jevpredict", "jev-options-iv": "jevoptionsiv",
           "jev-agents": "jevagents", "jev-career": "jevcareer", "jev-home": "jevhome", "jev-shop": "jevshop"}
 EXTERNAL = re.compile(r"BrokenPipe|Errno 32|Errno 54|HTTP 5\d\d|HTTPError: 5\d\d|ReadTimeout|ConnectTimeout|ConnectionReset|RemoteDisconnected|Max retries exceeded|Read timed out|Temporary failure|timed out|SSLError|ConnectionError|520|502|503|504|429", re.I)
 FDLEAK = re.compile(r"Too many open files|Errno 24")

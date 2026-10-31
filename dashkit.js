@@ -228,7 +228,7 @@
 (function () {
   "use strict";
   if (document.getElementById("jx-sw")) return;
-  var D = [["Jev HQ", 8791], ["Coin Desk", 8801], ["Perps", 8789], ["Markets", 8790], ["Markets B", 8797], ["Options IV", 8792], ["Predict", 8795], ["Agents", 8798], ["Career", 8799], ["Home", 8800], ["Zillow", 8793], ["AskJev", 8794], ["Shop", 8796]];
+  var D = [["Jev HQ", 8791], ["Coin Desk", 8801], ["Perps", 8789], ["Markets", 8790], ["Options IV", 8792], ["Predict", 8795], ["Agents", 8798], ["Career", 8799], ["Home", 8800], ["Zillow", 8793], ["AskJev", 8794], ["Shop", 8796]];
   var here = String(location.port || (location.protocol === "https:" ? 443 : 80));
   var cur = D.filter(function (d) { return String(d[1]) === here; })[0];
   var sw = document.createElement("div"); sw.className = "jx-sw jx-keep"; sw.id = "jx-sw";

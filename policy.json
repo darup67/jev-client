@@ -1,89 +1,92 @@
 {
- "optimizer": {
-  "enabled": true,
-  "audit_p": 0.06,
-  "max_div": 0.1,
-  "pace_warn": 0.9,
-  "pace_cut": 1.05
- },
- "callers": {
-  "*": {
-   "priority": "high",
-   "rel_step": 0.15
+  "optimizer": {
+    "enabled": true,
+    "audit_p": 0.06,
+    "max_div": 0.1,
+    "pace_warn": 0.9,
+    "pace_cut": 1.05
   },
-  "jev-majors": {
-   "priority": "high",
-   "ttl_s": 1200,
-   "rel_step": 0.25,
-   "ignore": [
-    "price",
-    "max_leverage",
-    "book.bid_depth_usd_0.5pct",
-    "book.ask_depth_usd_0.5pct",
-    "funding.annualized_pct",
-    "open_interest.usd_millions"
-   ],
-   "abs": {
-    "change.15m": 0.003,
-    "change.1h": 0.005,
-    "change.4h": 0.01,
-    "change.24h": 0.02,
-    "momentum.rsi_1h": 4,
-    "momentum.rsi_4h": 4,
-    "spread_bps": 2.0,
-    "book.imbalance": 0.3,
-    "open_interest.change_1h": 0.01,
-    "open_interest.change_24h": 0.03,
-    "premium_pct": 0.05,
-    "momentum.volume_vs_24h_avg": 0.4,
-    "positioning.book_imbalance_*": 0.3,
-    "positioning.fear_greed_index_0_100": 10,
-    "positioning.liquidated_*": 5.0,
-    "positioning.long_short_account_ratio": 0.15,
-    "positioning.ls_ratio_change_1h_pct": 2.0,
-    "positioning.open_interest_change_*": 1.0,
-    "positioning.taker_buy_share_1h": 0.05,
-    "phantom.shift_line_1h_pct": 1.0,
-    "trend.*.slope_5bars": 0.002,
-    "trend.*.price_vs_fast": 0.003,
-    "funding.now_per_hour_pct": 0.002
-   }
+  "callers": {
+    "*": {
+      "priority": "high",
+      "rel_step": 0.15
+    },
+    "jev-majors": {
+      "priority": "high",
+      "ttl_s": 1200,
+      "rel_step": 0.25,
+      "ignore": [
+        "price",
+        "max_leverage",
+        "book.bid_depth_usd_0.5pct",
+        "book.ask_depth_usd_0.5pct",
+        "funding.annualized_pct",
+        "open_interest.usd_millions"
+      ],
+      "abs": {
+        "change.15m": 0.003,
+        "change.1h": 0.005,
+        "change.4h": 0.01,
+        "change.24h": 0.02,
+        "momentum.rsi_1h": 4,
+        "momentum.rsi_4h": 4,
+        "spread_bps": 2.0,
+        "book.imbalance": 0.3,
+        "open_interest.change_1h": 0.01,
+        "open_interest.change_24h": 0.03,
+        "premium_pct": 0.05,
+        "momentum.volume_vs_24h_avg": 0.4,
+        "positioning.book_imbalance_*": 0.3,
+        "positioning.fear_greed_index_0_100": 10,
+        "positioning.liquidated_*": 5.0,
+        "positioning.long_short_account_ratio": 0.15,
+        "positioning.ls_ratio_change_1h_pct": 2.0,
+        "positioning.open_interest_change_*": 1.0,
+        "positioning.taker_buy_share_1h": 0.05,
+        "phantom.shift_line_1h_pct": 1.0,
+        "trend.*.slope_5bars": 0.002,
+        "trend.*.price_vs_fast": 0.003,
+        "funding.now_per_hour_pct": 0.002
+      }
+    },
+    "jev-markets": {
+      "priority": "high",
+      "ttl_s": 300,
+      "rel_step": 0.25,
+      "ignore": [
+        "price",
+        "vwap",
+        "atr_5m",
+        "range20_high",
+        "range20_low",
+        "horizon"
+      ],
+      "abs": {
+        "*_atr": 0.25,
+        "move_*": 0.2,
+        "rsi_1m": 4,
+        "volume_surge": 0.3,
+        "range_position_20m": 0.15,
+        "phantom_1h_line_atr": 0.5
+      }
+    },
+    "jev-predict": {
+      "priority": "high"
+    },
+    "paper-lab": {
+      "priority": "low"
+    },
+    "fomo-lane": {
+      "priority": "high",
+      "ttl_s": 900
+    }
   },
-  "jev-markets": {
-   "priority": "high",
-   "ttl_s": 300,
-   "rel_step": 0.25,
-   "ignore": [
-    "price",
-    "vwap",
-    "atr_5m",
-    "range20_high",
-    "range20_low",
-    "horizon"
-   ],
-   "abs": {
-    "*_atr": 0.25,
-    "move_*": 0.2,
-    "rsi_1m": 4,
-    "volume_surge": 0.3,
-    "range_position_20m": 0.15,
-    "phantom_1h_line_atr": 0.5
-   }
-  },
-  "jev-predict": {
-   "priority": "high"
-  },
-  "paper-lab": {
-   "priority": "low"
-  },
-  "fomo-lane": {
-   "priority": "high",
-   "ttl_s": 900
-  }
- },
- "blocked_callers": [
-  "jev-majors",
-  "jev-predict"
- ],
- "blocked_callers_note": "2026-10-22 user: Jev Perps (hidden engine caller jev-majors) and Jev Predict paused; no Jev API calls. Remove an entry to re-enable."
+  "blocked_callers": [
+    "jev-majors",
+    "jev-predict",
+    "fomo-lane",
+    "coin-desk-chains",
+    "jev-markets-invert"
+  ],
+  "blocked_callers_note": "2026-10-22 user: Jev Perps (hidden engine caller jev-majors) and Jev Predict paused; no Jev API calls. Remove an entry to re-enable."
 }

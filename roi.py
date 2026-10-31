@@ -100,7 +100,7 @@ def collect():
     rows.append(_stats("Jev Markets", "Desks", _eq_series(os.path.join(d, "data/equity.jsonl")), _kv(os.path.join(d, "data/desk.db"), "paper_start_bank") or 30000.0))
     # Jev Perps (renamed from Jev Majors 2026-10-22; folders keep their jev-majors* names) + A/B lanes (Markets invert arm B joins the same group)
     # 2026-10-22: Perps lane B (invert, ~/jev-majors-invert) IS Jev Perps; the old Jev-following book in ~/jev-majors is a hidden signal engine (no row)
-    for nm, folder in (("Jev Perps", "jev-majors-invert"), ("Markets lane B (invert)", "jev-markets-invert")):
+    for nm, folder in (("Jev Perps", "jev-majors-invert"),):
         d = os.path.join(HOME, folder)
         ser = _eq_series(os.path.join(d, "data/equity.jsonl"))
         carry, carry_t = _kv(os.path.join(d, "data/desk.db"), "paper_carry"), _kv(os.path.join(d, "data/desk.db"), "paper_carry_t")
