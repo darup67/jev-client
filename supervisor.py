@@ -32,6 +32,7 @@ REGISTRY = [
     ("com.dhruv.jevmajors.dashboard", None,                                       0,   8789, True),
     ("com.dhruv.jevmarkets.main",    P("jev-markets/data/heartbeat.json"),        150, None, True),
     ("com.dhruv.jevmarkets.dashboard", None,                                      0,   8790, True),
+    ("com.dhruv.jevmarkets.prop",    P("jev-markets/data/prop_heartbeat.json"),   120, None, True),     # shadow prop account (My Funded Futures rules), 2026-11-02
     ("com.dhruv.jevagents.main",     P("jev-agents/data/heartbeat.json"),         240, None, True),
     ("com.dhruv.jevagents.dashboard", None,                                       0,   8798, True),
     ("com.dhruv.jevcareer.dashboard", None,                                        0,   8799, True),
