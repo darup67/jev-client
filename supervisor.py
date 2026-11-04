@@ -21,15 +21,15 @@ P = lambda *a: os.path.join(HOME, *a)
 
 # label, heartbeat file (mtime), max age s, port (dashboards), keepalive
 REGISTRY = [
-    ("com.dhruv.jevmajors.main",     P("jev-majors/data/heartbeat.json"),         150, None, True),
-    ("com.dhruv.jevmajors.invert",   P("jev-majors-invert/data/heartbeat.json"),  150, None, True),
-    ("com.dhruv.jevcoindesk.main",   P("jev-coin-desk/data/fomo_alive"),         120, None, True),     # FOMO lane, split out of Jev Majors 2026-10-22
-    ("com.dhruv.jevcoindesk.chains", P("jev-coin-desk/data/chains_alive.json"),  120, None, True),     # multi-chain early-pool recorder, EVM chains (record only) 2026-10-22
-    ("com.dhruv.jevcoindesk.chainssol", P("jev-coin-desk/data/chains_alive_sol.json"), 120, None, True),  # same, Solana pump.fun feed in its own process
-    ("com.dhruv.jevcoindesk.health", P("jev-coin-desk/data/health.json"),      180, None, True),
-    ("com.dhruv.jevcoindesk.traps",  None,                                        0,   None, False),   # trap-detector cache rebuild (calendar job) 2026-10-22     # Coin Desk health monitor (health.py loop) 2026-10-22
-    ("com.dhruv.jevcoindesk.dashboard", None,                                     0,   8801, True),
-    ("com.dhruv.jevmajors.dashboard", None,                                       0,   8789, True),
+    #PAUSED ("com.dhruv.jevmajors.main",     P("jev-majors/data/heartbeat.json"),         150, None, True),
+    #PAUSED ("com.dhruv.jevmajors.invert",   P("jev-majors-invert/data/heartbeat.json"),  150, None, True),
+    #PAUSED ("com.dhruv.jevcoindesk.main",   P("jev-coin-desk/data/fomo_alive"),         120, None, True),     # FOMO lane, split out of Jev Majors 2026-10-22
+    #PAUSED ("com.dhruv.jevcoindesk.chains", P("jev-coin-desk/data/chains_alive.json"),  120, None, True),     # multi-chain early-pool recorder, EVM chains (record only) 2026-10-22
+    #PAUSED ("com.dhruv.jevcoindesk.chainssol", P("jev-coin-desk/data/chains_alive_sol.json"), 120, None, True),  # same, Solana pump.fun feed in its own process
+    #PAUSED ("com.dhruv.jevcoindesk.health", P("jev-coin-desk/data/health.json"),      180, None, True),
+    #PAUSED ("com.dhruv.jevcoindesk.traps",  None,                                        0,   None, False),   # trap-detector cache rebuild (calendar job) 2026-10-22     # Coin Desk health monitor (health.py loop) 2026-10-22
+    #PAUSED ("com.dhruv.jevcoindesk.dashboard", None,                                     0,   8801, True),
+    #PAUSED ("com.dhruv.jevmajors.dashboard", None,                                       0,   8789, True),
     ("com.dhruv.jevmarkets.main",    P("jev-markets/data/heartbeat.json"),        150, None, True),
     ("com.dhruv.jevmarkets.dashboard", None,                                      0,   8790, True),
     ("com.dhruv.jevmarkets.prop",    P("jev-markets/data/prop_heartbeat.json"),   120, None, True),     # shadow prop account (My Funded Futures rules), 2026-11-02
@@ -39,15 +39,15 @@ REGISTRY = [
     ("com.dhruv.jevlaneshort.dashboard", None,                                    0,   8803, True),
     ("com.dhruv.jevagents.main",     P("jev-agents/data/heartbeat.json"),         240, None, True),
     ("com.dhruv.jevagents.dashboard", None,                                       0,   8798, True),
-    ("com.dhruv.jevcareer.dashboard", None,                                        0,   8799, True),
+    #PAUSED ("com.dhruv.jevcareer.dashboard", None,                                        0,   8799, True),
     ("com.dhruv.jevhome.dashboard",   None,                                        0,   8800, True),
     ("com.dhruv.jevpredict.main",    P("jev-predict/data/heartbeat.json"),        150, None, True),
     ("com.dhruv.jevpredict.dashboard", None,                                      0,   8795, True),
     ("com.dhruv.jevoptionsiv.main",  P("jev-options-iv/data/heartbeat.json"),     300, None, True),
     ("com.dhruv.jevoptionsiv.dashboard", None,                                    0,   8792, True),
     ("com.dhruv.jevshadow",          P("jev-shadow/out.log"),                     9000, None, True),
-    ("com.dhruv.jevshop.watch",      P("jev-shop/data/watch_alive"),              120, None, True),
-    ("com.dhruv.jevshop",            None,                                        0,   8796, True),
+    #PAUSED ("com.dhruv.jevshop.watch",      P("jev-shop/data/watch_alive"),              120, None, True),
+    #PAUSED ("com.dhruv.jevshop",            None,                                        0,   8796, True),
     ("com.dhruv.askjev",             None,                                        0,   8794, True),
 ]
 ERROR_FILES = {"jev-majors": P("jev-majors/data/errors.jsonl"), "jev-markets": P("jev-markets/data/errors.jsonl"), "jev-predict": P("jev-predict/data/errors.jsonl"),
