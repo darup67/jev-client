@@ -24,6 +24,7 @@ REGISTRY = [
     #PAUSED ("com.dhruv.jevmajors.main",     P("jev-majors/data/heartbeat.json"),         150, None, True),
     #PAUSED ("com.dhruv.jevmajors.invert",   P("jev-majors-invert/data/heartbeat.json"),  150, None, True),
     ("com.dhruv.jevmarkets.perpdesk", P("jev-markets/data/perpdesk_alive"),          300, None, True),     # Jev Perp Desk: paper MFF perps (14 tickers), 2026-11-05
+    ("com.dhruv.jevmarkets.mffpath", P("jev-markets/data/mffpath_alive"),            900, None, True),     # simulated path to MFF live; emails "MOVE TO MFF" when every check passes, 2026-11-05
     ("com.dhruv.jevmarkets.patmem",   P("jev-markets/data/patmem_alive"),            600, None, True),     # pattern memory shadow (similar past setups -> expected R, scored, never trades) 2026-11-04
     ("com.dhruv.jevmarkets.newsjudge", P("jev-markets/data/news_alive"),           900, None, True),     # Jev news shadow (headlines -> bias/impact/shock, scored, never trades) 2026-11-04
     #PAUSED ("com.dhruv.jevcoindesk.main",   P("jev-coin-desk/data/fomo_alive"),         120, None, True),     # FOMO lane, split out of Jev Majors 2026-10-22
