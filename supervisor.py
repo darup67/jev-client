@@ -27,28 +27,19 @@ REGISTRY = [
     ("com.dhruv.jevmarkets.newsjudge", P("jev-markets/data/news_alive"),           900, None, True),     # Jev news shadow (headlines -> bias/impact/shock, scored, never trades) 2026-11-04
     ("com.dhruv.jevmarkets.main",    P("jev-markets/data/heartbeat.json"),        150, None, True),
     ("com.dhruv.jevmarkets.dashboard", None,                                      0,   8790, True),
-    ("com.dhruv.jevmarkets.prop",    P("jev-markets/data/prop_heartbeat.json"),   120, None, True),     # shadow prop account (My Funded Futures rules), 2026-11-02
+    ("com.dhruv.jevmarkets.prop",    P("jev-markets/data/prop_heartbeat_tfy100.json"),   120, None, True),     # Tradeify shadow accounts, 2026-11-02
     ("com.dhruv.jevlanelong.main",   P("jev-markets-lane-long/data/heartbeat.json"),  150, None, True),     # A/B lane: long-only Markets desk, 2026-11-03
     ("com.dhruv.jevlanelong.dashboard", None,                                     0,   8802, True),
-    ("com.dhruv.jevmff.main",        P("jev-markets-mff/data/heartbeat.json"),     150, None, True),     # isolated MFF-shadow desk (clone of Regular), 2026-11-05
+    ("com.dhruv.jevmff.main",        P("jev-markets-mff/data/heartbeat.json"),     150, None, True),     # isolated Tradeify-shadow feeder desk (clone of Regular), 2026-11-05
     ("com.dhruv.jevmff.dashboard",   None,                                         0,   8804, True),
     ("com.dhruv.jevlaneshort.main",  P("jev-markets-lane-short/data/heartbeat.json"), 150, None, True),    # A/B lane: short-only Markets desk
     ("com.dhruv.jevlaneshort.dashboard", None,                                    0,   8803, True),
-    #PAUSED ("com.dhruv.jevcareer.dashboard", None,                                        0,   8799, True),
-    ("com.dhruv.jevhome.dashboard",   None,                                        0,   8800, True),
-    ("com.dhruv.jevpredict.main",    P("jev-predict/data/heartbeat.json"),        150, None, True),
-    ("com.dhruv.jevpredict.dashboard", None,                                      0,   8795, True),
     ("com.dhruv.jevoptionsiv.main",  P("jev-options-iv/data/heartbeat.json"),     300, None, True),
     ("com.dhruv.jevoptionsiv.dashboard", None,                                    0,   8792, True),
-    ("com.dhruv.jevshadow",          P("jev-shadow/out.log"),                     9000, None, True),
-    #PAUSED ("com.dhruv.jevshop.watch",      P("jev-shop/data/watch_alive"),              120, None, True),
-    #PAUSED ("com.dhruv.jevshop",            None,                                        0,   8796, True),
-    ("com.dhruv.askjev",             None,                                        0,   8794, True),
 ]
-ERROR_FILES = {"jev-markets": P("jev-markets/data/errors.jsonl"), "jev-predict": P("jev-predict/data/errors.jsonl"),
-               "jev-options-iv": P("jev-options-iv/data/errors.jsonl"), }
-LOG_GLOBS = [P("jev-*/*.log"), P("jev-client/*.log"), P("market-lab/ops/*.log"), P("zillow-agent/*.log")]
-DBS = [P("jev-markets/data"), P("jev-predict/data"), P("jev-options-iv/data"), P("jev-shadow/data"), P("jev-desk/data")]
+ERROR_FILES = {"jev-markets": P("jev-markets/data/errors.jsonl"), "jev-options-iv": P("jev-options-iv/data/errors.jsonl"), }
+LOG_GLOBS = [P("jev-markets*/*.log"), P("jev-options-iv/*.log"), P("jev-client/*.log"), P("market-lab/ops/*.log")]
+DBS = [P("jev-markets/data"), P("jev-markets-lane-long/data"), P("jev-markets-lane-short/data"), P("jev-markets-mff/data"), P("jev-options-iv/data")]
 BACKUP_ROOT = P("Backups/jev")
 LOG_MAX = 20 * 1024 * 1024
 
