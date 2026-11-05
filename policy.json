@@ -86,7 +86,12 @@
     "jev-predict",
     "fomo-lane",
     "coin-desk-chains",
-    "jev-markets-invert"
+    "jev-markets-invert",
+    "event-desk",
+    "options-iv-card",
+    "paper-lab",
+    "jev-shop",
+    "jev-career"
   ],
-  "blocked_callers_note": "2026-10-22 user: Jev Perps (hidden engine caller jev-majors) and Jev Predict paused; no Jev API calls. Remove an entry to re-enable."
+  "blocked_callers_note": "2026-10-22 user: Jev Perps (hidden engine caller jev-majors) and Jev Predict paused; no Jev API calls. Remove an entry to re-enable. 2026-11-05 user: also event-desk, options-iv-card, paper-lab, jev-shop, jev-career paused; jev-markets and jev-markets-news stay open."
 }
