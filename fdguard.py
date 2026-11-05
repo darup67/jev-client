@@ -9,7 +9,7 @@ import json, os, plistlib, re, subprocess, sys, time
 
 HOME = os.path.expanduser("~")
 UID = os.getuid()
-PROTECTED = {"com.dhruv.jevmajors.main"}        # the user's rule: never stop the hidden signal engine; alert only
+PROTECTED = set()        # 2026-11-05: Jev Majors removed at the user's request
 WARN, KILL, TREND_RISE, TREND_MIN = 0.60, 0.85, 40, 120
 SOFT, HARD = 4096, 8192
 _LIM = {}
