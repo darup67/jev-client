@@ -39,6 +39,8 @@ REGISTRY = [
     ("com.dhruv.jevmarkets.prop",    P("jev-markets/data/prop_heartbeat.json"),   120, None, True),     # shadow prop account (My Funded Futures rules), 2026-11-02
     ("com.dhruv.jevlanelong.main",   P("jev-markets-lane-long/data/heartbeat.json"),  150, None, True),     # A/B lane: long-only Markets desk, 2026-11-03
     ("com.dhruv.jevlanelong.dashboard", None,                                     0,   8802, True),
+    ("com.dhruv.jevmff.main",        P("jev-markets-mff/data/heartbeat.json"),     150, None, True),     # isolated MFF-shadow desk (clone of Regular), 2026-11-05
+    ("com.dhruv.jevmff.dashboard",   None,                                         0,   8804, True),
     ("com.dhruv.jevlaneshort.main",  P("jev-markets-lane-short/data/heartbeat.json"), 150, None, True),    # A/B lane: short-only Markets desk
     ("com.dhruv.jevlaneshort.dashboard", None,                                    0,   8803, True),
     ("com.dhruv.jevagents.main",     P("jev-agents/data/heartbeat.json"),         240, None, True),
