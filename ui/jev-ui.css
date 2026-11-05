@@ -87,3 +87,14 @@ tr:last-child td { border-bottom: 0; } tbody tr:hover td { background: var(--car
 .jx-sw li a span { font: 500 12px/20px var(--mono); opacity: .6; }
 .jx-skip { position: fixed; left: 12px; top: -64px; z-index: 100; background: var(--ink); color: #000; padding: 8px 12px; border-radius: 8px; font-weight: 600; transition: transform 500ms var(--ease); } .jx-skip:focus { transform: translateY(76px); }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: opacity 200ms linear !important; } }
+
+/* mobile 2026-11-05: the dashboard switcher shrinks to a round button above the safe area, and pages keep room under it */
+.jx-sw .g { display: none; font-size: 16px; line-height: 1; }
+@media (max-width: 700px) {
+  .jx-sw { left: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); }
+  .jx-sw > button { width: 42px; height: 42px; padding: 0; justify-content: center; gap: 0; }
+  .jx-sw .t, .jx-sw .d { display: none; }
+  .jx-sw .g { display: inline; }
+  .jx-sw ul { bottom: 52px; min-width: 200px; }
+  body { padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
+}

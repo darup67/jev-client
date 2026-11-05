@@ -3,11 +3,11 @@
 (function () {
   "use strict";
   if (document.getElementById("jx-sw")) return;
-  var D = [["Jev HQ", 8791], ["Coin Desk", 8801], ["Perps", 8789], ["Markets", 8790], ["Options IV", 8792], ["Predict", 8795], ["Agents", 8798], ["Career", 8799], ["Home", 8800], ["Zillow", 8793], ["AskJev", 8794], ["Shop", 8796]];
+  var D = [["Jev HQ", 8791], ["Markets", 8790], ["Options IV", 8792], ["Zillow", 8793]];
   var here = String(location.port || (location.protocol === "https:" ? 443 : 80));
   var cur = D.filter(function (d) { return String(d[1]) === here; })[0];
   var sw = document.createElement("div"); sw.className = "jx-sw jx-keep"; sw.id = "jx-sw";
-  sw.innerHTML = '<button type="button" aria-haspopup="true" aria-expanded="false"><span class="d"></span>' + (cur ? cur[0] : "Jev") + ' · all dashboards</button><ul role="menu" aria-label="Jev dashboards">' +
+  sw.innerHTML = '<button type="button" aria-haspopup="true" aria-expanded="false" aria-label="Switch dashboard"><span class="d"></span><span class="t">' + (cur ? cur[0] : "Jev") + ' · all dashboards</span><span class="g" aria-hidden="true">&#9638;</span></button><ul role="menu" aria-label="Jev dashboards">' +
     D.map(function (d) { return '<li role="none"><a role="menuitem" href="' + location.protocol + "//" + location.hostname + ":" + d[1] + '/"' + (String(d[1]) === here ? ' aria-current="page"' : "") + ">" + d[0] + "<span>:" + d[1] + "</span></a></li>"; }).join("") + "</ul>";
   document.body.appendChild(sw);
   var btn = sw.querySelector("button");
