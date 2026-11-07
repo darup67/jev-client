@@ -23,6 +23,7 @@ P = lambda *a: os.path.join(HOME, *a)
 REGISTRY = [
     # DEPRECATED 2026-11-07 (user: remove perps from Jev): ("com.dhruv.jevmarkets.perpdesk", P("jev-markets/data/perpdesk_alive"),          300, None, True),     # Jev Perp Desk: paper MFF perps (14 tickers), 2026-11-05
     # DEPRECATED 2026-11-07 (user: remove Tradeify from Jev): ("com.dhruv.jevmarkets.mffpath", P("jev-markets/data/mffpath_alive"),            900, None, True),     # simulated path to MFF live; emails "MOVE TO MFF" when every check passes, 2026-11-05
+    ("com.dhruv.jevmarkets.rhcards", P("jev-markets/data/rhcards_alive"),           60, None, True),      # Jev RH cards v2: reads desk.db, writes cards for the /rh page (2026-11-07)
     ("com.dhruv.jevmarkets.patmem",   P("jev-markets/data/patmem_alive"),            600, None, True),     # pattern memory shadow (similar past setups -> expected R, scored, never trades) 2026-11-04
     ("com.dhruv.jevmarkets.newsjudge", P("jev-markets/data/news_alive"),           900, None, True),     # Jev news shadow (headlines -> bias/impact/shock, scored, never trades) 2026-11-04
     ("com.dhruv.jevmarkets.main",    P("jev-markets/data/heartbeat.json"),        150, None, True),
