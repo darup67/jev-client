@@ -21,17 +21,17 @@ P = lambda *a: os.path.join(HOME, *a)
 
 # label, heartbeat file (mtime), max age s, port (dashboards), keepalive
 REGISTRY = [
-    ("com.dhruv.jevmarkets.perpdesk", P("jev-markets/data/perpdesk_alive"),          300, None, True),     # Jev Perp Desk: paper MFF perps (14 tickers), 2026-11-05
-    ("com.dhruv.jevmarkets.mffpath", P("jev-markets/data/mffpath_alive"),            900, None, True),     # simulated path to MFF live; emails "MOVE TO MFF" when every check passes, 2026-11-05
+    # DEPRECATED 2026-11-07 (user: remove perps from Jev): ("com.dhruv.jevmarkets.perpdesk", P("jev-markets/data/perpdesk_alive"),          300, None, True),     # Jev Perp Desk: paper MFF perps (14 tickers), 2026-11-05
+    # DEPRECATED 2026-11-07 (user: remove Tradeify from Jev): ("com.dhruv.jevmarkets.mffpath", P("jev-markets/data/mffpath_alive"),            900, None, True),     # simulated path to MFF live; emails "MOVE TO MFF" when every check passes, 2026-11-05
     ("com.dhruv.jevmarkets.patmem",   P("jev-markets/data/patmem_alive"),            600, None, True),     # pattern memory shadow (similar past setups -> expected R, scored, never trades) 2026-11-04
     ("com.dhruv.jevmarkets.newsjudge", P("jev-markets/data/news_alive"),           900, None, True),     # Jev news shadow (headlines -> bias/impact/shock, scored, never trades) 2026-11-04
     ("com.dhruv.jevmarkets.main",    P("jev-markets/data/heartbeat.json"),        150, None, True),
     ("com.dhruv.jevmarkets.dashboard", None,                                      0,   8790, True),
-    ("com.dhruv.jevmarkets.prop",    P("jev-markets/data/prop_heartbeat_tfy100.json"),   120, None, True),     # Tradeify shadow accounts, 2026-11-02
+    # DEPRECATED 2026-11-07 (user: remove Tradeify from Jev): ("com.dhruv.jevmarkets.prop",    P("jev-markets/data/prop_heartbeat_tfy100.json"),   120, None, True),     # Tradeify shadow accounts, 2026-11-02
     ("com.dhruv.jevlanelong.main",   P("jev-markets-lane-long/data/heartbeat.json"),  150, None, True),     # A/B lane: long-only Markets desk, 2026-11-03
     ("com.dhruv.jevlanelong.dashboard", None,                                     0,   8802, True),
-    ("com.dhruv.jevmff.main",        P("jev-markets-mff/data/heartbeat.json"),     150, None, True),     # isolated Tradeify-shadow feeder desk (clone of Regular), 2026-11-05
-    ("com.dhruv.jevmff.dashboard",   None,                                         0,   8804, True),
+    # DEPRECATED 2026-11-07 (user: remove Tradeify from Jev): ("com.dhruv.jevmff.main",        P("jev-markets-mff/data/heartbeat.json"),     150, None, True),     # isolated Tradeify-shadow feeder desk (clone of Regular), 2026-11-05
+    # DEPRECATED 2026-11-07 (user: remove Tradeify from Jev): ("com.dhruv.jevmff.dashboard",   None,                                         0,   8804, True),
     ("com.dhruv.jevlaneshort.main",  P("jev-markets-lane-short/data/heartbeat.json"), 150, None, True),    # A/B lane: short-only Markets desk
     ("com.dhruv.jevlaneshort.dashboard", None,                                    0,   8803, True),
     ("com.dhruv.jevstocks.main",     P("jev-markets-stocks/data/heartbeat.json"), 150, None, True),       # Jev Stocks desk: S&P 500 + Nasdaq-100 + Dow 30 single stocks (2026-11-07)
@@ -41,7 +41,7 @@ REGISTRY = [
 ]
 ERROR_FILES = {"jev-markets": P("jev-markets/data/errors.jsonl"), "jev-options-iv": P("jev-options-iv/data/errors.jsonl"), }
 LOG_GLOBS = [P("jev-markets*/*.log"), P("jev-options-iv/*.log"), P("jev-client/*.log"), P("market-lab/ops/*.log")]
-DBS = [P("jev-markets/data"), P("jev-markets-lane-long/data"), P("jev-markets-lane-short/data"), P("jev-markets-mff/data"), P("jev-markets-stocks/data"), P("jev-options-iv/data")]
+DBS = [P("jev-markets/data"), P("jev-markets-lane-long/data"), P("jev-markets-lane-short/data"), P("jev-markets-stocks/data"), P("jev-options-iv/data")]
 BACKUP_ROOT = P("Backups/jev")
 LOG_MAX = 20 * 1024 * 1024
 
