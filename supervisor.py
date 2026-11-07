@@ -34,12 +34,14 @@ REGISTRY = [
     ("com.dhruv.jevmff.dashboard",   None,                                         0,   8804, True),
     ("com.dhruv.jevlaneshort.main",  P("jev-markets-lane-short/data/heartbeat.json"), 150, None, True),    # A/B lane: short-only Markets desk
     ("com.dhruv.jevlaneshort.dashboard", None,                                    0,   8803, True),
+    ("com.dhruv.jevstocks.main",     P("jev-markets-stocks/data/heartbeat.json"), 150, None, True),       # Jev Stocks desk: S&P 500 + Nasdaq-100 + Dow 30 single stocks (2026-11-07)
+    ("com.dhruv.jevstocks.dashboard", None,                                       0,   8805, True),
     ("com.dhruv.jevoptionsiv.main",  P("jev-options-iv/data/heartbeat.json"),     300, None, True),
     ("com.dhruv.jevoptionsiv.dashboard", None,                                    0,   8792, True),
 ]
 ERROR_FILES = {"jev-markets": P("jev-markets/data/errors.jsonl"), "jev-options-iv": P("jev-options-iv/data/errors.jsonl"), }
 LOG_GLOBS = [P("jev-markets*/*.log"), P("jev-options-iv/*.log"), P("jev-client/*.log"), P("market-lab/ops/*.log")]
-DBS = [P("jev-markets/data"), P("jev-markets-lane-long/data"), P("jev-markets-lane-short/data"), P("jev-markets-mff/data"), P("jev-options-iv/data")]
+DBS = [P("jev-markets/data"), P("jev-markets-lane-long/data"), P("jev-markets-lane-short/data"), P("jev-markets-mff/data"), P("jev-markets-stocks/data"), P("jev-options-iv/data")]
 BACKUP_ROOT = P("Backups/jev")
 LOG_MAX = 20 * 1024 * 1024
 
